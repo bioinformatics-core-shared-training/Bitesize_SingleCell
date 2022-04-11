@@ -2,7 +2,7 @@
 title: "Introduction to single-cell RNA-seq analysis"
 subtitle: 'Alignment and feature counting with Cell Ranger'
 
-author: "Stephane Ballereau & Ashley Sawle"
+author: "Ashley Sawle"
 output:
   html_document:
     df_print: paged
@@ -15,11 +15,7 @@ output:
 knitr::opts_chunk$set(echo=FALSE)
 ```
 
-<!--
-# Alignment and feature counting {#AliFeatCountTop}
--->
-
-<!-- # --># Introduction
+# Introduction
 
 The first step in the analysis of single cell RNAseq data is to align the
 sequenced reads against a genomic reference and then use a transcriptome
@@ -42,9 +38,8 @@ counting, but will also:
   software to further explore the data.  
   
 Cell Ranger is computationally very intensive, you will not be able to run it on
-a laptop or standard desktop computer. You will need access to, for example, a
-high performance computing (HPC) cluster, a server or other cloud-based computational
-resource with sufficient power - talk to your local IT support. 
+a laptop or standard desktop computer. You will need access to the
+high performance computing (HPC) cluster. 
 
 Alternative methods include:
 
@@ -63,7 +58,7 @@ derived data, we will use Cell Ranger. As detailed instructions are available
 on the [Cell Ranger pages](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger) of the 10x website, this chapter will not be
 comprehensive in terms of all options, but should provide a brief overview.
 
-<!-- # --># 10x Cell Ranger pipeline in brief
+# 10x Cell Ranger pipeline in brief
 
 Cell Ranger incorporates a number of tools for handling different components of
 the single cell RNAseq analysis. In this chapter we will be looking at the
@@ -75,35 +70,72 @@ In addition to the analysis tools, Cell Ranger also includes the `mkref` tool to
 generate a custom Cell Ranger reference from genomic and transcriptomic
 references.
 
-<!-- # -->## Installing Cell Ranger
+## Installing Cell Ranger
 
 Cell Ranger runs on Linux, and full installation instructions can be found on the 
 [10x website](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/installation).
 
-<!-- # -->## Cell Ranger references
+For the purposes of running Cell Ranger on the cluster, the Bioinformatics Core
+maintain an installation of the latest version at:
+
+```
+/home/bioinformatics/software/10x/cellranger-6.1.2
+```
+
+We will use this version during this practical.
+
+## Cell Ranger reference data
+
+### Common references from 10X
 
 Cell Ranger, like other aligners, requires the information about
 the genome and transcriptome of interest to be provided in a specific format.
 If you are working with the standard genome/transcriptome of human or mouse
 then you can download prebuilt references from the [10x
 website](https://support.10xgenomics.com/single-cell-gene-expression/software/downloads/latest)
-(there is even a combined human-mouse genome reference, which is useful for patient-derived xenograft experiments).
+(there is even a combined human-mouse genome reference, which is useful for
+patient-derived xenograft experiments).
 
-If you require a reference for the genome of another species, or wish to add
-custom transcripts to the gene annotation (e.g. fusion genes), then you will
-need to build your own index using the Cell Ranger `mkref` tool. 
+The Bioinformatics Core maintains a repository of references from 10X here:
+
+```
+/mnt/scratchb/bioinformatics/reference_data/10x
+```
+
+Note that this includes references for single cell ATAC sequencing and 
+references for ATAC+Gene Expression libraries (ARC).
+
+In addition, it should be noted that the references supplied by 10X have not 
+been updated for some time and they are outdated with reference to the current
+Ensembl release (currently 106, the release used in the current 10X references
+was 98 from 2020).
+
+### Custom references
+
+If you require a reference for the genome of another species, wish to use the
+most recent releases or wish to add custom transcripts to the gene annotation
+(e.g. fusion genes), then you will need to build your own index using the Cell
+Ranger `mkref` tool.
 In order to prepare our reference for Cell Ranger, we need two files: 
 
 - A reference genome in FASTA format
 - A transcript annotation file in GTF format 
 
-These files can be downloaded from public repositories such as [Ensembl](https://www.ensembl.org) (see [EnsemblGenomes](https://ensemblgenomes.org/) for non-vertebrate genomes).
-As an example for our course, we have downloaded one of the chromosomes from the 
-[human genome page](https://www.ensembl.org/Homo_sapiens/Info/Index).
-In a real-life scenario you would download the full genome, conventionally named `species.version.dna.toplevel.fa.gz` (for example, `Homo_sapiens.GRCh38.dna.toplevel.fa.gz`).
-We have also downloaded the GTF file with transcript annotation for our genome from the same site. 
+These files can be downloaded from public repositories such as 
+[Ensembl](https://www.ensembl.org) 
+(see [EnsemblGenomes](https://ensemblgenomes.org/) 
+for non-vertebrate genomes). As an example for our course, we have downloaded
+one of the chromosomes from the
+[human genome page](https://www.ensembl.org/Homo_sapiens/info/index).
+In a real-life scenario you would download the full genome, conventionally named
+`species.version.dna.toplevel.fa.gz` (for example,
+`Homo_sapiens.GRCh38.dna.toplevel.fa.gz`). We have also downloaded the GTF file
+with transcript annotation for our genome from the same site.
 
-To index our genome, we can use the `cellranger mkref` tool as (replacing `{...}` with the relevant piece of information): 
+## Practical - making a custom reference
+
+To index our genome, we can use the `cellranger mkref` tool as (replacing
+`{...}` with the relevant piece of information):
 
 ```bash
 cellranger mkref \
@@ -113,64 +145,143 @@ cellranger mkref \
   --genes={ANNOTATION GTF}
 ```
 
-One thing of note is that `mkref` does not work with files compressed with `gzip` (the format that Ensembl provides them as). 
-Therefore, make sure to decompress the files first (you can do this using the `gunzip file.gz` command).
+One thing of note is that `mkref` does not work with files compressed with
+`gzip` (the format that Ensembl provides them as). Therefore, make sure to
+decompress the files first (you can do this using the `gunzip file.gz` command).
 
+### Sync the required data to your scratch drive
 
-:::exercise 
+We have placed all the data you require on cluster. You will first need to 
+create a copy of this on your scratch drive. Note that you will need to do this
+at the start of each practical session, so we will use the `rsync` command. This
+command synchronises two directories, it will not copy files that are already 
+present in the destination directory unless they differ from the copies in the
+source directory.
 
-Open VS Code and create a shell script named `01-prepare_reference.sh` to index the reference genome for Cell Ranger. 
-The output from `mkref` should be named `cellranger_index`. 
-The start of the script is given here, so you can copy/paste this to a new file and work from there. 
+First log in to the cluster if you have not already done so:
 
-```bash
-#!/bin/bash
-
-# change to directory with the FASTA and GTF files
-cd Data/reference/
-
-# run mkref
-cellranger mkref FIXME
+```
+ssh clust1-headnode
 ```
 
-Run your script from the terminal using `bash` (make sure you're running it from the `~/Course_Materials` directory. 
+You will need to enter your password. 
 
-<details><summary>Answer</summary>
+Next navigate from the home directory to your "scratch A". You will need to 
+replace the `<GROUP>` and `<USERNAME>` with your personal details:
 
-The complete script would be: 
-
-```bash
-#!/bin/bash
-
-# change to directory with the FASTA and GTF files
-cd Data/reference/
-
-# run mkref
-cellranger mkref \
-  --nthreads=8 \
-  --genome=cellranger_index \
-  --fasta=Homo_sapiens.GRCh38.dna.chromosome.21.fa \
-  --genes=Homo_sapiens.GRCh38.104.chr21.gtf
+```
+cd /scratcha/<GROUP>/<USERNAME>
 ```
 
-If we save this script in our `scripts` folder as `01-prepare_reference.sh`, we could then run it from the terminal with:
+For example if you are part of the Winton group and your username is "smith01",
+then the command would be:
 
-```console
-$ bash scripts/01-prepare_reference.sh
+```
+cd /scratcha/dwlab/smith01
 ```
 
-</details>
+Now copy the `Course_Material` directory from the bioinformatics scratch:
 
-:::
+```
+rsync -vrptg /scratcha/bioinformatics/Course_Materials .
+```
+
+The rsync options we've used do the following:
+* `v` - verbose: prints out each file it copies
+* `r` - recurse into directories
+* `p` - preserve permissions
+* `t` - preserve time stamps
+* `g` - preserve the group
+
+The latter three options are required so that when we run the rsync command 
+again, files that have already been copied will look exactly the same and so 
+will not be copied again.
+
+Now navigate into the *Course_Materials* directory. All practical work will be
+carried out in this location.
+
+```
+cd Course_Materials
+```
+
+## Creating a custom reference including a custom gene
+
+We will create a new Cell Ranger reference in which we will include thre custom 
+genes - these could for example be transgenes or a fusion genes. For the sake of 
+time we will only include chr14 from the human genome, but in reality you would
+normally use the full human reference genome. The "custom genes" we are going to
+be adding are in fact just random sequences generated for the purposes of this
+practical.
+
+The first step is to create a fasta file for the custom gene sequences and an
+accompanying gtf file with the gene annotations. We have already done this for
+you. 
+
+In the basic genome reference fasta there is one sequence for each chromosome or
+contig. The gtf contains details of the genomic locations of genes, exons, 
+transcripts and CDSs on each of these seuqneces along with "attributes" for each
+of these features such as gene names, gene IDss etc. Each gene will have 
+multiple entries, e.g one for each exon detailing is start and end locations on 
+the chromosome.
+
+You can read more about the format of the gtf file [here](http://www.ensembl.org/info/website/upload/gff.html). For the "attributes"
+column of the gtf the two critical tags for the Cell Ranger reference are the 
+"gene_id" and "gene_name".
+
+The sequences for the custom genes are the full transcript sequence. For the 
+fasta file we create one "dummy" contig for each gene. For the gtf we
+will therefore define the gene as having one exon starting at position 1 and 
+ending on the last base of the contig.
+
+You should see a directory called *references*, which currently contains four
+files:
+
+* customgenes.fa
+* customgenes.gtf
+* Homo_sapiens.GRCh38.105.chr14.gtf
+* Homo_sapiens.GRCh38.dna.chromosome.14.fa
+
+The first two files are the references for our "custom genes", the second two
+are the references for human chromosome 14. You can view the contents of these
+files with `cat`, or `head` to just the look at the top few lines.
+
+You should also see a directory call **cellranger_scripts**. This contains the 
+scripts we will use to the make the reference and then do the alignment, 
+counting and cell calling. It also contains a script call *masterscript.md*, 
+which contains all the commands that we will type at the command line in this
+practical.
+
+### Combine the custom gene references with the human references
+
+The first step is to combine the two sets of references.
+
+```
+cat Homo_sapiens.GRCh38.105.chr14.gtf customgenes.gtf > combined.gtf
+cat Homo_sapiens.GRCh38.dna.chromosome.14.fa customgenes.fa > combined.fa
+```
+
+### Run `mkref` on the combined reference
+
+Now we run the `cellrange mkref` tool on the combined reference. This will 
+require significant memory and multiple cpus, so we will submit this as a batch
+job to the cluster. In the scripts directory you can find the `MakeReference.sh`
+file which is the shell script we will submit. You can view the contents with 
+`cat`.
+
+```
+sbatch
+
+################# HERE HARE HERE ###############################
 
 
-<!-- # -->## Cell Ranger `count`
+
+## Cell Ranger `count`
 
 Full details for running the `cellranger count` tool can be found on the 
 [10x website](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/count).
 Here, we go through a typical analysis workflow with this tool. 
 
-<!-- # -->### Preparing the raw fastq files
+### Preparing the raw fastq files
 
 To run Cell Ranger `count` the fastq files for samples to be processed should be
 placed in a single directory. Cell Ranger will be run separately on each sample.
@@ -208,7 +319,7 @@ e.g. for a single sample in the Caron data set we have:
     SRR9264343_S0_L001_R2_001.fastq.gz
 ```
 
-<!-- # -->### Running `cellranger count`
+### Running `cellranger count`
 
 The minimum information require to run `cellranger count` is:
 
@@ -317,7 +428,7 @@ $ bash scripts/02-cellranger.sh
 
 
 
-<!-- # --># Cell Ranger outputs
+# Cell Ranger outputs
 
 Cell Ranger will create a single results folder for each sample names. Each
 folder will be named according to the `--id` option in the command. In the top
@@ -366,7 +477,7 @@ the count matrix directories into R.
 The filtered count matrix only contains droplets that have been called as cells
 by Cell Ranger.  
 
-<!-- # -->## The summary report
+## The summary report
 
 The Cell Ranger summary report - `web_summary.html` - is a very useful first 
 port of call for assessing the quality of the data. An example is linked
@@ -383,7 +494,7 @@ These can be accessed by clicking the question mark icon in the header of the
 section. A more comprehensive explanation of the various components of the 
 report can be found on [the 10x website](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/output/summary).
 
-<!-- # -->## The cloupe file and the Loupe browser
+## The cloupe file and the Loupe browser
 
 The `cloupe.cloupe` file that Cell Ranger generates can be loaded using the 
 [Loupe Browser application](https://support.10xgenomics.com/single-cell-gene-expression/software/visualization/latest/what-is-loupe-cell-browser) provided by 10x. This provides an interactive
@@ -404,9 +515,9 @@ it should be remembered that Cell Ranger has not performed and QC on the
 contents of the droplets it has called as cells - in the next section of the
 course we will perform additional QC to eliminate poor quality cells.
 
-<!-- # -->## The count matrices
+## The count matrices
 
-<!-- # -->### What are the counts?
+### What are the counts?
 
 Remember that for each read we have a sample barcode, a cell barcode, and a
 UMI.  In addition we now have location on the genome and a corresponding gene
@@ -419,7 +530,7 @@ Thus we avoid counting PCR duplicate reads as these will have the same UMI. For
 this reason we more commonly talk about the "UMI count" rather than the "Read
 count"; the "Read count" could be higher than the "UMI count"
 
-<!-- # -->### Filtered vs. Raw matrices
+### Filtered vs. Raw matrices
 
 Cell Ranger performs some analysis on the data to distinguish between droplets
 that contain cells and empty droplets. The filtered counts matrices only contain
