@@ -227,7 +227,7 @@ the chromosome.
 You can read more about the format of the gtf file 
 [here](http://www.ensembl.org/info/website/upload/gff.html). In the
 "attributes" column of the gtf the two critical tags for the Cell Ranger
-reference are the "gene_id" and "gene_name".
+reference are the "gene_id", "gene_name" and "transcript_id".
 
 The sequences for the custom genes are the full transcript sequence. For the 
 fasta file we create one "dummy" chromosome/contig for each gene. For the gtf we
@@ -257,20 +257,81 @@ practical.
 The first step is to combine the two sets of references.
 
 ```{bash, eval=FALSE}
+cd references
 cat Homo_sapiens.GRCh38.105.chr14.gtf customgenes.gtf > combined.gtf
 cat Homo_sapiens.GRCh38.dna.chromosome.14.fa customgenes.fa > combined.fa
+cd ..
 ```
+
+You should now have two new files in the **references** directory called
+*combined.gtf* and *combined.fa*.
 
 ### Run `mkref` on the combined reference
 
 Now we run the `cellrange mkref` tool on the combined reference. This will 
 require significant memory and multiple cpus, so we will submit this as a batch
-job to the cluster. In the scripts directory you can find the `MakeReference.sh`
-file which is the shell script we will submit. You can view the contents with 
-`cat`.
+job to the cluster. In the scripts directory you can find the
+`CellRanger_MakeRef.sh` file which is the shell script we will submit. You can
+view the contents with `cat`.
+
+```{bash, eval=FALSE}
+sbatch cellranger_scripts/CellRanger_MakeRef.sh
+```
+
+<details><summary>Detailed explanation of code in `CellRanger_MakeRef.sh`</summary>
 
 ```
-sbatch
+#!/bin/bash
+```
+This first line determines which interpreter will be used to run the rest of the
+script. There are many kinds of interpreter - bash, tsch, Perl, R Python. For general
+unix command line script we will us *bash*
+
+```
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=2:00:00
+#SBATCH -o cellranger_mkref.%j.out
+#SBATCH -e cellranger_mkref.%j.err
+#SBATCH -J cellranger_mkref
+```
+These  lines are instructions to the the Slurm scheduler, which manages the
+allocation of cluster resources to jobs that have been submitted. The first
+three lines are essential and are stating that this job will require 8
+processors, 32 Gigabytes of memory and up to 2 hours to run. The `-e` and `-o`
+lines are giving names for files to which output messages or errors from the 
+script will be written; the `%j` will be replaced by the job number that is
+allocated when the job is run. This way if you run the script multiple times,
+you can identify which instance each file refers to.
+
+
+```
+export PATH=/home/bioinformatics/software/10x/cellranger-6.1.2/bin:${PATH}
+```
+
+This line modifys the "PATH" global variable to add the directory containing the
+`cellranger` software. The "PATH" is a variable that contains the *paths* of
+directories containing various tools we might want to use at the command line.
+When you type a command at the command line or in a script, the shell searches
+these directories to find the a file matching that command. 
+
+```
+cellranger mkref --genome=GRCh38_custom_10X \ 
+                 --fasta=references/combined.fa \
+                 --genes=references/combined.gtf \
+                 --memgb=32 \
+                 --nthreads=8
+```
+* `--genome`  - here we specify a name for the output folder that will contain
+the reference  
+* `--fasta` - this the path to the fasta file we wish to use to create the new
+reference   
+* `--genes` - this the path to the gtf file we wish to use to create the new
+reference  
+* `--memgb` - This specifies the memory that cellranger should use  
+* `--nthreads` - this specifies the number of threads that cellrange can split 
+the job into; it should match the `min-cpus` option in the header of the script.  
+</details>
 
 ################# HERE HARE HERE ###############################
 
