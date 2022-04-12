@@ -12,7 +12,6 @@ output:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo=FALSE)
 ```
 
 # Introduction
@@ -137,7 +136,7 @@ with transcript annotation for our genome from the same site.
 To index our genome, we can use the `cellranger mkref` tool as (replacing
 `{...}` with the relevant piece of information):
 
-```bash
+```
 cellranger mkref \
   --nthreads={CPUS} \
   --genome={OUTPUT FOLDER FOR INDEX} \
@@ -160,7 +159,7 @@ source directory.
 
 First log in to the cluster if you have not already done so:
 
-```
+```{bash, eval=FALSE}
 ssh clust1-headnode
 ```
 
@@ -169,38 +168,39 @@ You will need to enter your password.
 Next navigate from the home directory to your "scratch A". You will need to 
 replace the `<GROUP>` and `<USERNAME>` with your personal details:
 
-```
+```{bash, eval=FALSE}
 cd /scratcha/<GROUP>/<USERNAME>
 ```
 
 For example if you are part of the Winton group and your username is "smith01",
 then the command would be:
 
-```
+```{bash, eval=FALSE}
 cd /scratcha/dwlab/smith01
 ```
 
 Now copy the `Course_Material` directory from the bioinformatics scratch:
 
-```
+```{bash, eval=FALSE}
 rsync -vrptg /scratcha/bioinformatics/Course_Materials .
 ```
 
-The rsync options we've used do the following:
-* `v` - verbose: prints out each file it copies
-* `r` - recurse into directories
-* `p` - preserve permissions
-* `t` - preserve time stamps
-* `g` - preserve the group
+The rsync options we've used do the following:  
 
-The latter three options are required so that when we run the rsync command 
-again, files that have already been copied will look exactly the same and so 
-will not be copied again.
+* `v` - verbose: prints out each file it copies  
+* `r` - recurse into directories  
+* `p` - preserve permissions  
+* `t` - preserve time stamps  
+* `g` - preserve the group  
+
+The last three options are required so that when we run the rsync command 
+again, files that have already been copied will look exactly the same as the
+originals and so will not be copied again.
 
 Now navigate into the *Course_Materials* directory. All practical work will be
 carried out in this location.
 
-```
+```{bash, eval=FALSE}
 cd Course_Materials
 ```
 
@@ -224,12 +224,13 @@ of these features such as gene names, gene IDss etc. Each gene will have
 multiple entries, e.g one for each exon detailing is start and end locations on 
 the chromosome.
 
-You can read more about the format of the gtf file [here](http://www.ensembl.org/info/website/upload/gff.html). For the "attributes"
-column of the gtf the two critical tags for the Cell Ranger reference are the 
-"gene_id" and "gene_name".
+You can read more about the format of the gtf file 
+[here](http://www.ensembl.org/info/website/upload/gff.html). In the
+"attributes" column of the gtf the two critical tags for the Cell Ranger
+reference are the "gene_id" and "gene_name".
 
 The sequences for the custom genes are the full transcript sequence. For the 
-fasta file we create one "dummy" contig for each gene. For the gtf we
+fasta file we create one "dummy" chromosome/contig for each gene. For the gtf we
 will therefore define the gene as having one exon starting at position 1 and 
 ending on the last base of the contig.
 
@@ -247,7 +248,7 @@ files with `cat`, or `head` to just the look at the top few lines.
 
 You should also see a directory call **cellranger_scripts**. This contains the 
 scripts we will use to the make the reference and then do the alignment, 
-counting and cell calling. It also contains a script call *masterscript.md*, 
+counting and cell calling. It also contains a script called *masterscript.md*, 
 which contains all the commands that we will type at the command line in this
 practical.
 
@@ -255,7 +256,7 @@ practical.
 
 The first step is to combine the two sets of references.
 
-```
+```{bash, eval=FALSE}
 cat Homo_sapiens.GRCh38.105.chr14.gtf customgenes.gtf > combined.gtf
 cat Homo_sapiens.GRCh38.dna.chromosome.14.fa customgenes.fa > combined.fa
 ```
