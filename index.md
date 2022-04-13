@@ -1,29 +1,23 @@
-# Introduction to single-cell RNA-seq data analysis 
-### 3-day course
-#### Taught remotely
-#### Bioinformatics Training, Craik-Marshall Building, Downing Site, University of Cambridge
+# Introduction to single-cell RNA-seq data analysis - Bitesize
+### 7 week course
+#### Bioinformatics Core Facility, Cancer Research UK Cambridge Institute
 
-![](Images/uniOfCamCrukLogos.png)
+![](Images/CRUK_Cambridge_Institute.png)
 
 ## Instructors
 
-* Abigail Edwards - Bioinformatics Core, Cancer Research UK Cambridge Institute
+* Abbi Edwards - Bioinformatics Core, Cancer Research UK Cambridge Institute
 * Ashley Sawle - Bioinformatics Core, Cancer Research UK Cambridge Institute
-* Hugo Tavares - Bioinformatics Training Facility, University of Cambridge
-* Katarzyna Kania - Genomics Core, Cancer Research UK Cambridge Institute
-* Stephane Ballereau - Bioinformatics Core, Cancer Research UK Cambridge Institute
-
-**Helpers:**
-
 * Chandra Chilamakuri - Bioinformatics Core, Cancer Research UK Cambridge Institute
-* Chloe Pacyna - Wellcome Sanger Institute
-* Jon Price - The Gurdon Institute, University of Cambridge
-* Karsten Bach - Department of Pharmacology, University of Cambridge
+* Kamal Kishore - Bioinformatics Core, Cancer Research UK Cambridge Institute
+* Katarzyna Kania - Genomics Core, Cancer Research UK Cambridge Institute
+* Matthew Eldridge - Bioinformatics Core, Cancer Research UK Cambridge Institute
+
 
 ## Outline
 
 This workshop is aimed at biologists interested in learning how to perform
-standard single-cell RNA-seq analyses. 
+basic single-cell RNA-seq analyses. 
 
 This will focus on the droplet-based assay by 10X genomics and include running
 the accompanying `cellranger` pipeline to align reads to a genome reference and
@@ -33,10 +27,9 @@ marker genes, as well as differential expression and abundance analyses.
 You will also learn how to generate common plots for analysis and visualisation
 of gene expression data, such as TSNE, UMAP and violin plots.
 
-We have run this course twice and are still learning how to teach it remotely.
-Please bear with us if there are any technical hitches, and be aware that timings
-for different sections laid out in the schedule below may not be adhered to.
-There may be some necessity to make adjusments to the course as we go.
+This is the first time we are running this course in the bitesize format.
+Please bear with us if there are any technical hitches, and there 
+may be some necessity to make adjustments to the course as we go.
 
 (Materials linked to below will be updated closer to the time of delivery)
 
@@ -50,6 +43,7 @@ There may be some necessity to make adjusments to the course as we go.
 > strongly encourage you to work through an introductory R course before
 > attempting these materials.
 > We recommend our [Introduction to R course](https://bioinformatics-core-shared-training.github.io/r-intro/)
+> You will also need a CI cluster account and be familiar with its use.
 
 ## Data sets
 
@@ -61,86 +55,42 @@ Two data sets:
 * ['HCA': adult BMMCs](https://data.humancellatlas.org/explore/projects/cc95ff89-2e68-4a08-a234-480eca21ce79) (ABMMCs) obtained from the Human Cell Atlas (HCA)
   * (here downsampled from 25000 to 5000 cells per sample)
 
-## Tentative schedule
+## Schedule
 
-**Tentative schedule** for a 3-day course.
+Each week there will be a taught Tuesday session and a Friday clinic. Calendar invites for these meetings (on teams) should have been sent to your CRUK email address.
 
-(long sessions include breaks)
+It is assumed you will try the exercises between the two sessions and attend the clinic with any questions. During the week you can also ask questions at anytime to your designated member of the bioinformatics core. You should have had an email identifying who this but if you are unsure please contact `chandra.chilamakuri@cruk.cam.ac.uk`.
 
-### Day 1
+### Week 1
 
-* 09:30 - 09:40 **Welcome** <!-- Paul -->
-* 09:40 - 10:25 **Introduction** - Katarzyna Kania
-    + [Slides](Slides/01_Introduction.pdf)
-* 10:25 - 10:30 5 min **break** 
-* 10:30 - 10:40 **Preamble**: data set and workflow - Stephane Ballereau
-    + [Slides](Slides/02_PreambleSlides.html)
-* 10:40 - 12:30 Library structure, **cellranger** for alignment and cell calling - Stephane Ballereau
-    + [Slides](Slides/03_CellRangerSlides.html) <!-- \([pdf](scRNAseq/Slides/CellRangerSlides.pdf)\) -->
-    + [Alignment with Cell Ranger](Markdowns/03_CellRanger.html)
-* 12:30 - 13:30 **lunch break**
-* 13:30 - 17:30 **QC and exploratory analysis** - Ashley Sawle
-    + [Slides](Slides/04_QualityControlSlides.html) \([pdf](Slides/04_QualityControlSlides.pdf)\)
-<!--
-    + [QC and preprocessing](Markdowns/04_Preprocessing_And_QC.html)     
-    + [Exercise](Markdowns/04_Preprocessing_And_QC.Exercise.html)  
--->
+* Introduction to Single Cell Methods - Katarzyna Kania
+* Alignment and cell counting with Cellranger - Ashley Sawle
 
-### Day 2
+### Week 2
 
-* 09:30 - 09:40 Recap <!-- Stephane -->
-* 09:40 - 12:30 **Normalisation** - Stephane Ballereau
-    + [Slides](Slides/05_NormalisationSlides.html) <!-- \([pdf](scRNAseq/Slides/05_normalisationSlides.pdf)\) -->
-<!--
-    + [Practical](Markdowns/05_Normalisation.html)     
-    + [Exercises](Markdowns/05_Normalisation_exercises.html)
-    + [Exercise Solutions](Markdowns/05_Normalisation_exercises_solutions.html)
--->
-* 12:30 - 13:30 **lunch break**
-* 13:30 - 15:25 **Feature selection and dimensionality reduction** - Hugo Tavares
-    + [Slides](Slides/06_FeatureSelectionAndDimensionalityReduction_slides.html)
-<!--
-    + [Materials](Markdowns/06_FeatureSelectionAndDimensionalityReduction.html)
--->
-* 15:25 - 15:35 10 min **break**
-* 15:35 - 17:30 **Batch correction and data set integration** - Abigail Edwards
-    + [Slides](Slides/07_DataIntegrationAndBatchCorrectionSlides.html)  
-<!--
-    + [Data set integration](Markdowns/07_DataSetIntegration_PBMMC_ETV6-RUNX1.html)
-    + [Solutions](Markdowns/07_DataIntegrationChallengeSolution.html)
-    + [Batch Correction extended example](Markdowns/07_BatchCorrection.html)
--->
+* Quality Control and Filtering - Chandra Chilamakuri
     
-### Day 3
+### Week 3
 
-* 09:30 - 09:40 Recap <!-- Stephane -->
-* 09:40 - 11:05 **Clustering** - Stephane Ballereau
-    + [Slides](Slides/08_ClusteringSlides.html)
-<!--
-    + [Practical](Markdowns/08_ClusteringPostDsi.html)
-    + [Exercise1](Markdowns/08_ClusteringPostDsi_exercise.Rmd)
-    + [Exercise Solutions](Markdowns/08_ClusteringPostDsi_exercise_solutions.html)
--->
-* 11:05 - 11:15 10 min **break** 
-* 11:15 - 12:30 **Identification of cluster marker genes** - Hugo Tavares
-    + [Slides](Slides/09_ClusterMarkerGenes.html)
-<!--
-    + [Cluster marker genes](Markdowns/09_ClusterMarkerGenes.html)
-    + Worksheet in `Exercises/09_ClusterMarkerGenes.R`
--->
-* 12:30 - 13:30 **lunch break**
-* 13:30 - 15:25 **Differential expression between conditions** - Stephane Ballereau
-    + [Slides](Slides/10_MultiSplCompSlides.html)
-<!--
-    + [Practical](Markdowns/10_MultiSplComp.html)
-    + [Exercise1](Markdowns/10_MultiSplComp_exercise1.Rmd)
-    + [Exercise1 Solutions](Markdowns/10_MultiSplComp_exercise1_solutions.html)
--->
-* 15:25 - 15:35 10 min **break** 
-* 15:35 - 17:30 **Differential abundance between conditions** - Stephane Ballereau
-    + [Slides](Slides/10_MultiSplCompSlides.html)
-<!--
-    + [Practical](Markdowns/10_MultiSplComp.html)
-    + [Exercise2](Markdowns/10_MultiSplComp_exercise2.Rmd)
-    + [Exercise2 Solutions](Markdowns/10_MultiSplComp_exercise2_solutions.html)
--->
+* Normalisation - Kamal Kishore
+
+### Week 4
+
+* Feature selection and Dimensionality Reduction - Chandra Chilamakuri
+
+### Week 5 
+
+* Batch Correction and Data Set Integration - Abbi Edwards
+
+### Week 6
+
+* Clustering and Cluster Marker genes - Ashley Sawle
+
+### Week 7
+
+* Differential Expression and Abundance - Abbi Edwards
+
+## Additional Resources
+
+## Acknowledgements
+
