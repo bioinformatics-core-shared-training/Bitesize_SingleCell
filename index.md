@@ -82,7 +82,10 @@ Friday Session
 ### Week 1
 
 * Introduction to Single Cell Methods - Katarzyna Kania
+  + [Slides](Slides/01_Introduction.pdf)
+  
 * Alignment and cell counting with Cellranger - Ashley Sawle
+  + [Slides](Slides/03_CellRangerSlides.html) <!-- \([pdf](Slides/CellRangerSlides.pdf)\) -->
 
 ### Week 2
 
@@ -96,7 +99,7 @@ Friday Session
 
 * Feature selection and Dimensionality Reduction - Chandra Chilamakuri
 
-### Week 5 
+### Week 5
 
 * Batch Correction and Data Set Integration - Abbi Edwards
 
