@@ -541,13 +541,13 @@ files/directories that will not be of immediate interest.
 
 The contents of the sample directory will look like this:
 
-```{r outputDir, fig.align='center', out.width="50%"}
+```{r outputDir, fig.align='center', out.width="50%", echo=FALSE}
 knitr::include_graphics("Images/CellRangerOutput.png")
 ```
 
 The contents of the `outs` directory are:
 
-```{r outputDirOuts, fig.align='center', out.width="50%"}
+```{r outputDirOuts, fig.align='center', out.width="50%", echo=FALSE}
 knitr::include_graphics("Images/CellRangerOutputOuts.png")
 ```
 
@@ -604,7 +604,7 @@ The `cloupe.cloupe` file that Cell Ranger generates can be loaded using the
 visualization and analysis platform that allows you to extensively explore your
 data with a point and click interface.
 
-```{r LoupeBrowser, fig.align='center', out.width="75%"}
+```{r LoupeBrowser, fig.align='center', out.width="75%", echo=FALSE}
 knitr::include_graphics("Images/LoupeBrowser.png")
 ```
 
