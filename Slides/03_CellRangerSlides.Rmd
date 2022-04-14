@@ -1,6 +1,6 @@
 ---
 title: "Alignment and feature counting"
-author: "Ashley Sawle, Stephane Ballereau"
+author: "Ashley Sawle"
 date: 'April 2022'
 output:
   ioslides_presentation:
@@ -199,25 +199,25 @@ knitr::include_graphics('Images/LoupeBrowser.png')
 
 ## Cell Ranger outputs
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='60%', fig.align='center'}
 knitr::include_graphics('Images/CellRangerOutputOuts_bam.png')
 ```
 
 ## Cell Ranger outputs
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='60%', fig.align='center'}
 knitr::include_graphics('Images/CellRangerOutputOuts_countsraw.png')
 ```
 
 ## Cell Ranger outputs
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='60%', fig.align='center'}
 knitr::include_graphics('Images/CellRangerOutputOutsMatrix.png')
 ```
 
 ## Cell Ranger outputs
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='60%', fig.align='center'}
 knitr::include_graphics('Images/CellRangerOutputOuts_countsfiltered.png')
 ```
 
