@@ -73,10 +73,6 @@ Tuesday Session
 
 3. The session will be recorded for you so there is no need to try to do this yourself.
 
-Friday Session
-
-???????????
-
 ## Schedule
 
 ### Week 1
@@ -122,11 +118,17 @@ Friday Session
 This course was initialy based on the [OSCA](https://bioconductor.org/books/release/OSCA/) (Orchestrating Single-Cell Analysis) book with subsequent modifications by
 
 Abigail Edwards
+
 Ashley Sawle
+
 Chandra Chilamakuri
+
 Kamal Kishore
+
 Stephane Ballereau
+
 Hugo Tavares
+
 Katarzyna Kania
 
   - The original paper is here: https://dx.doi.org/10.1038/s41592-019-0654-x
