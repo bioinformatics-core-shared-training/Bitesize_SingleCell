@@ -1,12 +1,12 @@
 ---
 title: "Alignment and feature counting"
 author: "Ashley Sawle, Stephane Ballereau"
-date: 'February 2022'
+date: 'April 2022'
 output:
   ioslides_presentation:
     widescreen: true
     smaller: true
-    logo: Images/uniOfCamCrukLogos.png
+    logo: Images/CRUK_Cambridge_Institute.png
     css: css/stylesheet.css
 ---
 
@@ -50,16 +50,28 @@ knitr::include_graphics('Images/tenxLibStructureV3dual.png')
 knitr::include_graphics('Images/fastqcTop.png')
 ```
 
-## QC of Raw Reads - MultiQC - General Statistics
+## QC of Raw Reads - MultiQC
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
-knitr::include_graphics('Images/multiqc1.png')
+```{r echo=FALSE, out.width='87%', fig.align='center'}
+knitr::include_graphics('Images/multiqc_header.png')
 ```
 
-## QC of Raw Reads - MultiQC - Sequence Quality Histograms 
+## QC of Raw Reads - MultiQC
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
-knitr::include_graphics('Images/multiqc2.png')
+```{r echo=FALSE, out.width='87%', fig.align='center'}
+knitr::include_graphics('Images/multiqc_mga.png')
+```
+
+## QC of Raw Reads - MultiQC
+
+```{r echo=FALSE, out.width='87%', fig.align='center'}
+knitr::include_graphics('Images/multiqc_SeqQualHist.png')
+```
+
+## QC of Raw Reads - MultiQC 
+
+```{r echo=FALSE, out.width='87%', fig.align='center'}
+knitr::include_graphics('Images/multiqc_SingleCell.png')
 ```
 
 ## Alignment and counting
@@ -110,12 +122,23 @@ Cell Ranger requires the fastq file names to follow a convention:
 <SampleName>_S<SampleNumber>_L00<Lane>_<Read>_001.fastq.gz
 ```
 
-e.g. for a single sample in the Caron data set we have:
+e.g. for a single sample we may want:
 
 ```
-    SRR9264343_S0_L001_I1_001.fastq.gz
-    SRR9264343_S0_L001_R1_001.fastq.gz
-    SRR9264343_S0_L001_R2_001.fastq.gz
+    SITTA11_S1_L001_I1_001.fastq.gz
+    SITTA11_S1_L001_I2_001.fastq.gz
+    SITTA11_S1_L001_R1_001.fastq.gz
+    SITTA11_S1_L001_R2_001.fastq.gz
+```
+
+Unfortunately, the files we receive from the Genomics server will be named like 
+this:
+
+```
+    SLX-21334.SITTA11.HTLCWDRXY.s_2.i_1.fq.gz
+    SLX-21334.SITTA11.HTLCWDRXY.s_2.i_2.fq.gz
+    SLX-21334.SITTA11.HTLCWDRXY.s_2.r_1.fq.gz
+    SLX-21334.SITTA11.HTLCWDRXY.s_2.r_2.fq.gz
 ```
 
 ## Genome/Transcriptome Reference
@@ -131,7 +154,7 @@ the genome and transcriptome of interest to be provided in a specific format.
 * Computationally very intensive
 * High memory requirements
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='80%', fig.align='center'}
 knitr::include_graphics('Images/CellRangerCommand.png')
 ```
 
@@ -146,13 +169,13 @@ knitr::include_graphics('Images/CellRangerOutput.png')
 
 ## Cell Ranger outputs
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='60%', fig.align='center'}
 knitr::include_graphics('Images/CellRangerOutputOuts.png')
 ```
 
 ## Cell Ranger outputs
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='60%', fig.align='center'}
 knitr::include_graphics('Images/CellRangerOutputOuts_websummary.png')
 ```
 
@@ -164,7 +187,7 @@ knitr::include_graphics('Images/CellRangerReport.png')
 
 ## Cell Ranger outputs
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='60%', fig.align='center'}
 knitr::include_graphics('Images/CellRangerOutputOuts_cloupe.png')
 ```
 

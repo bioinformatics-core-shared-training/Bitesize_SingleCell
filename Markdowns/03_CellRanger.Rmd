@@ -147,19 +147,23 @@ ssh clust1-headnode
 
 You will need to enter your password. 
 
-Next navigate from the home directory to your "scratch A". You will need to 
-replace the `<GROUP>` and `<USERNAME>` with your personal details:
+Next navigate from the home directory to your "scratch A" (or "scratch B" if you
+prefer). You will need to replace the `<GROUP>` and `<USERNAME>` with your
+personal details:
 
 ```{bash, eval=FALSE}
 cd /scratcha/<GROUP>/<USERNAME>
 ```
 
-For example if you are part of the Winton group and your username is "smith01",
-then the command would be:
+For example if you were part of the Winton group with the username
+"smith01", then the command would be:
 
 ```{bash, eval=FALSE}
 cd /scratcha/dwlab/smith01
 ```
+
+**Note**: if you do not already have a directory under `/scratcha/<GROUP>` you will
+need to create one using `mkdir`.
 
 Now copy the **Course_Material** directory from the bioinformatics scratch:
 
@@ -186,10 +190,10 @@ carried out in this location.
 cd Course_Materials
 ```
 
-# Creating a custom reference including a custom gene
+# Creating a custom reference for Cell Ranger
 
-We will create a new Cell Ranger reference in which we will include thre custom 
-genes - these could for example be transgenes or a fusion genes. For the sake of 
+We will create a new Cell Ranger reference in which we will include three custom 
+genes - these could for example be transgenes or fusion genes. For the sake of 
 time we will only include chr14 from the human genome, but in reality you would
 normally use the full human reference genome. The "custom genes" we are going to
 be adding are in fact just random sequences generated for the purposes of this
@@ -204,21 +208,21 @@ accompanying gtf file with the gene annotations. We have already done this for
 you. 
 
 In the basic genome reference fasta there is one sequence for each chromosome or
-contig. The gtf contains details of the genomic locations of genes, exons, 
-transcripts and CDSs on each of these seuqneces along with "attributes" for each
-of these features such as gene names, gene IDs etc. Each gene will have 
-multiple entries, e.g one for each exon detailing is start and end locations on 
-the chromosome.
+contig. The gtf contains details of the genomic locations of different features,
+such as genes, exons, transcripts and CDSs, on each of these sequences along
+with "attributes" for each of these features such as gene names, gene IDs etc.
+Each gene will have multiple entries, e.g one for each exon detailing is start
+and end locations on the chromosome.
 
-You can read more about the format of the gtf file 
-[here](http://www.ensembl.org/info/website/upload/gff.html). In the
-"attributes" column of the gtf the three critical tags for the Cell Ranger
-reference are the "gene_id", "gene_name" and "transcript_id".
+You can read more about the format of the gtf file
+[here](http://www.ensembl.org/info/website/upload/gff.html). For the Cell Ranger
+reference the critical tags in the "attributes" column of the gtf are the
+"gene_id", "gene_name" and "transcript_id".
 
-The sequences for the custom genes are the full transcript sequence. For the 
-fasta file we create one chromosome/contig for each gene. For the gtf we
-will therefore define the gene as having one exon starting at position 1 and 
-ending on the last base of the contig.
+The sequences for the custom genes are the full transcript sequence. In the
+fasta file we create one chromosome/contig for each gene. For the gtf we will
+therefore define the gene as having one exon starting at position 1 and ending
+on the last base of the contig.
 
 You should see a directory called **references**, which currently contains four
 files:
@@ -361,13 +365,15 @@ reagents. There are **five** samples in the sequencing run. The SLX ID is
 
 ## Download clarity tools
 
-We will be a piece of software called "Clarity Tools" to retrieve the data from
-the servers. We will first need to download the clarity tools file.
+We will be using a piece of software developed specifically for the CI called
+"Clarity Tools" to retrieve the data from the servers. We will first need to
+download the clarity tools file.
 
 ```{bash, eval=FALSE}
 mkdir software
 wget -P software http://internal-bioinformatics.cruk.cam.ac.uk/software/clarity-tools.jar 
 ```
+
 This will download the *clarity-tools.jar* file into a directory called 
 **software**.
 
@@ -391,26 +397,24 @@ outputs from the automated sequencing processing.
 There are five files for each sample, the sample is identified by the name of
 the sample barcode added during library prep:
 
-```
-* SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.i_1.fq.gz - Index 1 (Sample index)
-* SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.i_2.fq.gz - Index 2 (Sample index)
-* SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.md5sums.txt - checksum file - see note below
-* SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.r_1.fq.gz - Read 1 (10x Droplet Barcode + UMI)
-* SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.r_2.fq.gz - Read 2 (RNA fragment sequence)
-```
+
+* **SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.i_1.fq.gz** - Index 1 (Sample index)  
+* **SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.i_2.fq.gz** - Index 2 (Sample index)  
+* **SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.md5sums.txt** - checksum file - see note below  
+* **SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.r_1.fq.gz** - Read 1 (10x Droplet Barcode + UMI)  
+* **SLX-21334.{SampleBarcode}.HTLCWDRXY.s_2.r_2.fq.gz** - Read 2 (RNA fragment sequence)  
+
 
 Note: checksums are a way to ensure the integrity of downloaded data. See 
 (here for more details)[https://ukdataservice.ac.uk/learning-hub/research-data-management/store-your-data/checksums/].
 
 There are also five "lost reads" files:
 
-```
-SLX-21334.HTLCWDRXY.s_2.i_1.lostreads.fq.gz - Index 1 lost reads
-SLX-21334.HTLCWDRXY.s_2.i_2.lostreads.fq.gz - Index 1 lost reads
-SLX-21334.HTLCWDRXY.s_2.lostreads.md5sums.txt - checksum for lost reads
-SLX-21334.HTLCWDRXY.s_2.r_1.lostreads.fq.gz - Index 1 lost reads
-SLX-21334.HTLCWDRXY.s_2.r_2.lostreads.fq.gz - Index 1 lost reads
-```
+* **SLX-21334.HTLCWDRXY.s_2.i_1.lostreads.fq.gz** - Index 1 lost reads
+* **SLX-21334.HTLCWDRXY.s_2.i_2.lostreads.fq.gz** - Index 1 lost reads
+* **SLX-21334.HTLCWDRXY.s_2.lostreads.md5sums.txt** - checksum for lost reads
+* **SLX-21334.HTLCWDRXY.s_2.r_1.lostreads.fq.gz** - Index 1 lost reads
+* **SLX-21334.HTLCWDRXY.s_2.r_2.lostreads.fq.gz** - Index 1 lost reads
 
 When the data come off the sequencer, all the reads for all the samples are in a
 single file. In order to separate them, the automated process compares the reads
@@ -420,26 +424,25 @@ to technical issues, e.g. sequencing errors, there will always be a small number
 of reads with indexes that do not match any expected indexes. These reads are
 placed in the "lostreads" files.
 
-The `SLX-21334.HTLCWDRXY.s_2.html` file is QC file containing basic information
+The **SLX-21334.HTLCWDRXY.s_2.html** file is QC file containing basic information
 about the sequencing quality. You should move this file to your local machine 
 and check that everything looks okay.
 
 The remaining files relate to the automated processing of the raw sequencing
 data (in bcl2 format) to the fastq format:
 
-```
-SLX-21334.HTLCWDRXY.s_2.bcl2fastq.zip - Zip file stats related to automated processing
-SLX-21334.HTLCWDRXY.s_2.contents.csv - Details of the samples from the genomics LIMS
-```
+* **SLX-21334.HTLCWDRXY.s_2.bcl2fastq.zip** - Zip file stats related to automated processing
+* **SLX-21334.HTLCWDRXY.s_2.contents.csv** - Details of the samples from the genomics LIMS
+
 
 ## Rename the fastq to the correct format for Cell Ranger
 
-To run Cell Ranger `count` the fastq files for samples to be processed should be
+To run Cell Ranger `count`, the fastq files for samples to be processed should be
 placed in a single directory. Cell Ranger will be run separately on each sample.
 You will need to provide the software with the sample name (e.g. SITTH10) of the
 sample to be processed. Cell Ranger expects the file names of the fastq files to
 follow a specific convention so that it can correctly identify the files for the
-specific sample. The convention is the default convention used by `bcl2fastq`
+each sample. The convention is the default convention used by `bcl2fastq`
 (the tool that converts the raw sequencing data in `bcl` format into `fastq`
 files):
 
@@ -602,7 +605,8 @@ report can be found on [the 10x website](https://support.10xgenomics.com/single-
 The `cloupe.cloupe` file that Cell Ranger generates can be loaded using the 
 [Loupe Browser application](https://support.10xgenomics.com/single-cell-gene-expression/software/visualization/latest/what-is-loupe-cell-browser) provided by 10x. This provides an interactive
 visualization and analysis platform that allows you to extensively explore your
-data with a point and click interface.
+data with a point and click interface. The 10X website provides extensive 
+instructions on how you can use the Loupe Browser.
 
 ```{r LoupeBrowser, fig.align='center', out.width="75%", echo=FALSE}
 knitr::include_graphics("Images/LoupeBrowser.png")
@@ -614,7 +618,7 @@ particular clusters of cells, or identify the type of cells in different
 clusters based on gene expression. While the browser is an excellent tool for
 data exploration and identification of potential avenues of analysis, it should 
 not be used as a substitute for proper bioinformatic analysis. In particular,
-it should be remembered that Cell Ranger has not performed and QC on the 
+it should be remembered that Cell Ranger has not performed any QC on the 
 contents of the droplets it has called as cells - in the next section of the
 course we will perform additional QC to eliminate poor quality cells.
 
