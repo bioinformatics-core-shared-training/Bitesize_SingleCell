@@ -530,7 +530,7 @@ these samples is 3000-4000, so we'll stick with the default.
 ```{bash, eval=FALSE}
 referenceDir=references/refdata-gex-GRCh38-2020-A
 for barcode in `ls fastq/ | cut -f 1 -d '_' | uniq`; do
-  sbatch scripts/CellRanger_Count.sh ${barcode} ${refDir}
+  sbatch scripts/CellRanger_Count.sh ${barcode} ${referenceDir}
 done
 ```
 
