@@ -81,7 +81,7 @@ Tuesday Session
   + [Slides](Slides/01_Introduction.pdf)
   
 * Alignment and cell counting with Cellranger - Ashley Sawle
-  + [Slides](Slides/03_CellRangerSlides.html) \([pdf](Slides/CellRangerSlides.pdf)\)
+  + [Slides](Slides/03_CellRangerSlides.html) \([pdf](Slides/03_CellRangerSlides.pdf)\)
   + [Practical](Markdowns/03_CellRanger.html)
 
 ### Week 2
