@@ -637,6 +637,37 @@ Thus we avoid counting PCR duplicate reads as these will have the same UMI. For
 this reason we more commonly talk about the "UMI count" rather than the "Read
 count"; the "Read count" could be higher than the "UMI count"
 
+### The count matrix outputs
+
+The raw count matrix outputs can be found in the directory 
+`outs/raw_feature_bc_matrix` under each sample directory. This contains three
+files:
+
+* *barcodes.tsv.gz* - containing a list of cell (droplet) barcodes detected
+* *features.tsv.gz* - containing a list of all the features (genes) assayed
+* *matrix.mtx.gz* - containing the counts for each gene for each barcode
+
+The *matrix.mtx.gz* is not a simple table of **barcodes** x **features**. Most
+of these counts would be '0' and given the very large numbers of barcodes and
+features, the full table would be extremely large. In order make things more 
+manageable the *matrix.mtx.gz* file only contains information about *cells* in
+the table that are non-zero.
+
+Use the following commands to look at the three files and understand how they 
+are related:
+
+```{bash, eval=FALSE}
+zcat barcodes.tsv.gz | head
+zcat barcodes.tsv.gz | wc -l
+zcat features.tsv.gz | head
+zcat features.tsv.gz | wc -l
+zcat matrix.mtx.gz | head
+zcat matrix.mtx.gz | wc -l
+```
+
+`head` just prints out the top 10 lines of the file; `wc -l` gives you the 
+number of lines in the file.
+
 ### Filtered vs. Raw matrices
 
 Cell Ranger performs some analysis on the data to distinguish between droplets
@@ -678,3 +709,12 @@ not. The light blue region, indicates a region where some droplets have been
 called as cells, but other have not - depending on the outcome of the RNA 
 profiling step of the algorithm.
 
+### Cell Ranger reports
+
+Each sample has a report created by cell ranger that provides QC and cell 
+calling information, along with some preliminary clustering and differential
+expression analysis. The report can be found at `outs/web_summary.html` under
+the directory for each sample.
+
+On your laptop open the `web_summary.html` reports for each of the samples and
+review the results.
