@@ -657,12 +657,12 @@ Use the following commands to look at the three files and understand how they
 are related:
 
 ```{bash, eval=FALSE}
-zcat barcodes.tsv.gz | head
-zcat barcodes.tsv.gz | wc -l
-zcat features.tsv.gz | head
-zcat features.tsv.gz | wc -l
-zcat matrix.mtx.gz | head
-zcat matrix.mtx.gz | wc -l
+zcat SITTA11/outs/barcodes.tsv.gz | head
+zcat SITTA11/outs/barcodes.tsv.gz | wc -l
+zcat SITTA11/outs/features.tsv.gz | head
+zcat SITTA11/outs/features.tsv.gz | wc -l
+zcat SITTA11/outs/matrix.mtx.gz | head
+zcat SITTA11/outs/matrix.mtx.gz | wc -l
 ```
 
 `head` just prints out the top 10 lines of the file; `wc -l` gives you the 

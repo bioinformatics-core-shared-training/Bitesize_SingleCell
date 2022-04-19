@@ -525,12 +525,12 @@ done</code></pre>
 </ul>
 <p>The <em>matrix.mtx.gz</em> is not a simple table of <strong>barcodes</strong> x <strong>features</strong>. Most of these counts would be ‘0’ and given the very large numbers of barcodes and features, the full table would be extremely large. In order make things more manageable the <em>matrix.mtx.gz</em> file only contains information about <em>cells</em> in the table that are non-zero.</p>
 <p>Use the following commands to look at the three files and understand how they are related:</p>
-<pre class="bash"><code>zcat barcodes.tsv.gz | head
-zcat barcodes.tsv.gz | wc -l
-zcat features.tsv.gz | head
-zcat features.tsv.gz | wc -l
-zcat matrix.mtx.gz | head
-zcat matrix.mtx.gz | wc -l</code></pre>
+<pre class="bash"><code>zcat SITTA11/outs/barcodes.tsv.gz | head
+zcat SITTA11/outs/barcodes.tsv.gz | wc -l
+zcat SITTA11/outs/features.tsv.gz | head
+zcat SITTA11/outs/features.tsv.gz | wc -l
+zcat SITTA11/outs/matrix.mtx.gz | head
+zcat SITTA11/outs/matrix.mtx.gz | wc -l</code></pre>
 <p><code>head</code> just prints out the top 10 lines of the file; <code>wc -l</code> gives you the number of lines in the file.</p>
 </div>
 <div id="filtered-vs.-raw-matrices" class="section level3" number="7.3.3">
