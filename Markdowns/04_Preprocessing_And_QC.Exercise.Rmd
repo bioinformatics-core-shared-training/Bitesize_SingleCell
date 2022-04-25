@@ -1,7 +1,7 @@
 ---
 title: "Introduction to single-cell RNA-seq analysis"
 subtitle: 'Quality Control'
-author: "Stephane Ballereau, Ashley Sawle"
+author: "Stephane Ballereau, Ashley Sawle and Chandra Chilamakuri"
 output:
   html_document:
     df_print: paged
@@ -21,7 +21,7 @@ set.seed(123)
 
 # Introduction
 
-In the course materials we performed QC and filtering of 2 samples from each
+In the course materials we performed QC and filtering of 1 sample from each
 of the sample groups. For this challenge we would like you to perform QC and 
 filtering on all of the samples from the Caron data set. 
 
@@ -311,22 +311,38 @@ How many cells will be removed from the data set?
 With these samples we have three possible "batch" levels at which we could 
 run adaptive filtering. We could apply the filtering across all samples 
 together (i.e. no `batch`), we could apply it by sample group (ETV6-RUNX1, 
-HHD, PBMMC, PRE-T), or we could apply it per sample. 
+HHD, PBMMC, PRE-T) (batch=sce\$SampleGroup), or we could apply it per sample (batch=sce$Sample)
 </details>
 
-
-<details><summary>Answer</summary>
+<!--
 It is clear that there are significantly different distribution profiles
 between samples in the same group. Noticeably the distribution profiles for the
 two PBMMC_1 samples are quite different - it would appear that PBMMC_1b has a
 lower overal UMI count indicating less sequencing. For this reason it may be
 prudent to apply the adaptive filtering to each sample independently.
+-->
+
+<details><summary>Answer</summary>
+
 
 ```{r quickPerCellQC_batch_compute}
+# at sample level
 cell_qc_results <- quickPerCellQC(colData(sce),
                                 percent_subsets=c("subsets_Mito_percent"),
                                 batch=sce$Sample)
 as.data.frame(cell_qc_results) %>% summarise(across(everything(), sum))
+
+# at sample group level
+cell_qc_results_gGroup <- quickPerCellQC(colData(sce),
+                                percent_subsets=c("subsets_Mito_percent"),
+                                batch=sce$SampleGroup)
+as.data.frame(cell_qc_results_gGroup) %>% summarise(across(everything(), sum))
+
+# at all samples
+cell_qc_results_all <- quickPerCellQC(colData(sce),
+                                percent_subsets=c("subsets_Mito_percent")
+                                )
+as.data.frame(cell_qc_results_all) %>% summarise(across(everything(), sum))
 ```
 
 In total `r sum(cell_qc_results$discad)` cells will be removed from the
