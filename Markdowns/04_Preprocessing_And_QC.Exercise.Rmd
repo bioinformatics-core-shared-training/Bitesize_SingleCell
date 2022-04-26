@@ -25,6 +25,34 @@ In the course materials we performed QC and filtering of 1 sample from each
 of the sample groups. For this challenge we would like you to perform QC and 
 filtering on all of the samples from the Caron data set. 
 
+# Starting  the RStudio server
+
+To start the RStudio server use the following command:
+
+```{bash, eval=FALSE}
+rstudio-scRNAseq
+```
+
+This will send a job to the cluster to start the RStudio server with 8 cores and
+32 Gigabytes of memory. Once the job starts you will get a message like this:
+
+![](../Images/RStudioServer_message.png)
+
+To launch the RStudio server:
+
+* leave this job running in the terminal window (if you stop it, the session
+will end)
+* copy the URL provided into your browser
+* Enter your username and password. The username is your normal username.
+The password is given in the message above. **Note:** The password will change
+each time you start a new session.  
+* Remember to terminate the cluster job when you are finished with session 
+(just press `Ctrl + c` in the terminal window).  
+
+The RStudio server may not start with the working directory set to your 
+`Course_Materials` directory, so you may need to change this (once you've done
+this once, it *should* remember for later sessions.)
+
 # Load packages
 
 ```{r libraries}
