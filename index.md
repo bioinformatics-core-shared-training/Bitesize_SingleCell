@@ -88,7 +88,9 @@ Tuesday Session
 
 * Quality Control and Filtering - Chandra Chilamakuri
   + [Practical](Markdowns/04_Preprocessing_And_QC.html)
-  + [Exercise](Markdowns/04_Preprocessing_And_QC.Exercise.html)   
+  + [Practical Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%202%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20taught%20session%2D20220426%5F113253%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
+  + [Exercise](Markdowns/04_Preprocessing_And_QC.Exercise.html) 
+  + [Exercise Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%202%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20clinic%20session%2D20220429%5F140517%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
 ### Week 3
 
 * Normalisation - Kamal Kishore
