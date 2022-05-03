@@ -94,6 +94,10 @@ Tuesday Session
 ### Week 3
 
 * Normalisation - Kamal Kishore
+  + [Slides](Slides/Normalization.pdf)
+  + [Practical](Markdowns/05_Normalisation.html)
+  + [Exercises](Markdowns/05_Normalisation_exercises.html)
+
 
 ### Week 4
 
