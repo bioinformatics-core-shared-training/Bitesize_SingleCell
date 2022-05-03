@@ -2,7 +2,7 @@
 title: "Introduction to single-cell RNA-seq analysis"
 subtitle: 'Normalisation - GSM3872434 sample'
 
-author: "Stephane Ballereau"
+author: "Stephane Ballereau/ Kamal Kishore"
 output:
   html_document:
     df_print: paged
@@ -15,18 +15,18 @@ output:
     toc_float: yes
     number_sections: true
   html_book:
-    code_folding: hide
+    code_folding: show
 ---
 
 # Normalisation - Exercises
 
-Exercise: apply the deconvolution and SCTransform normalisations methods on a
+Exercise: apply the deconvolution normalisation method on a
 single sample: ETV6-RUNX1_1 (aka GSM3872434).
 
 ```{r norm_Caron.knitr_options, echo=FALSE, results="hide", message=FALSE}
 require(knitr)
 # set working directory# set working directory# set working directory
-knitr::opts_knit$set(root.dir = '/home/ubuntu/Course_Materials/Exercises')
+knitr::opts_knit$set(root.dir = '/Users/kishor01/Desktop/SingleCellCourseCRUK/Bitesize_SingleCell/CourseMaterials/Exercises')
 # set other chunk variables
 opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE, eval=FALSE)
 opts_chunk$set(fig.width=7, fig.height=7)
@@ -45,14 +45,16 @@ bpp <- MulticoreParam(7)
 
 ## Load object
 
+We will load the R object created after QC.
+
 ```{r GSM3872434_readIn}
 # Read object in:
 # remember getwd() and dir()
-sce <- readRDS("./Robjects/Caron_filtered.rds")
+sce <- readRDS("../Robjects/Caron_filtered_genes.rds")
 colData(sce)$SampleName <- colData(sce)$Sample
 ```
 
-Select cells for ETV6-RUNX1_1:
+Select cells for ETV6-RUNX1_1 sample:
 
 ```{r GSM3872434_downsample}
 # have new list of cell barcodes for each sample
@@ -64,13 +66,13 @@ vec.bc <- colData(sce.master) %>%
 	pull(Barcode)
 ```
 
-Number of cells in the sample:
+Check the Number of cells in the sample:
 
 ```{r GSM3872434_barcodes}
 table(colData(sce.master)$Barcode %in% vec.bc)
 ```
 
-Subset cells from the SCE object:
+Subset the cells from the SCE object:
 
 ```{r GSM3872434_subset_sce}
 tmpInd <- which(colData(sce.master)$Barcode %in% vec.bc)
@@ -91,7 +93,7 @@ table(colData(sce)$SampleName)
 
 ## Exercise 1 : Deconvolution
 
-Cluster cells then normalise.
+Clusters of cells first identified to help form sensible pools of cells. 
 
 ### Cluster cells
 
@@ -102,6 +104,9 @@ table(clust)
 ```
 
 ### Compute size factors
+
+Scaling factors are then computed from the identified cluster.
+
 
 ```{r calculateSumFactors_norm_GSM3872434_allCells}
 # deconvolve
@@ -115,7 +120,7 @@ table(clust)
 
 ```
 
-Plot deconvolution size factors against library size factors:
+Check the relation between the deconvolution size factors against library size factors. To do this compute library size factors:
 
 ```{r scatter_deconvSf_libSf_prep_norm_GSM3872434_allCells}
 # compute library size factors
@@ -126,6 +131,9 @@ Plot deconvolution size factors against library size factors:
 
 ```
 
+
+Generate a scatter plot of library size against deconvolution size factors:
+ 
 ```{r scatter_deconvSf_libSf_colBy_more_norm_GSM3872434_allCells}
 # plot deconv.sf against lib.sf
 
@@ -136,6 +144,7 @@ Plot deconvolution size factors against library size factors:
 
 ### Apply size factors
 
+Apply the deconvolution size factors on the dataset:
 <!--
 For each cell, raw counts for genes are divided by the size factor for that cell
 and log-transformed so downstream analyses focus on genes with strong relative
