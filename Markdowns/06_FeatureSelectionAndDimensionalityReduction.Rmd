@@ -362,7 +362,7 @@ sce %>%
   runTSNE(dimred = "PCA") %>% 
   ggcells(aes(TSNE.1, TSNE.2, colour = SampleName)) +
   geom_point() +
-  ggthemes::scale_colour_tableau(palette = "Tableau 20") +
+  #ggthemes::scale_colour_tableau(palette = "Tableau 20") +
   labs(colour = "Sample") +
   theme_void()
 ```
@@ -625,7 +625,7 @@ sce <- runUMAP(sce)
 ```{r umap_example, echo=FALSE, purl=FALSE}
 ggcells(sce, aes(UMAP.1, UMAP.2, colour = SampleName)) +
   geom_point() +
-  ggthemes::scale_colour_tableau(palette = "Tableau 20") +
+  #ggthemes::scale_colour_tableau(palette = "Tableau 20") +
   labs(colour = "Sample") +
   theme_void()
 ```
