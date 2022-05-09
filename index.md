@@ -84,14 +84,17 @@ Tuesday Session
   + [Slides](Slides/03_CellRangerSlides.html) \([pdf](Slides/03_CellRangerSlides.pdf)\)
   + [Practical](Markdowns/03_CellRanger.html)
   + [Recording](https://login.microsoftonline.com/32583f88-ba68-4291-81e9-f0488ee773fc/oauth2/authorize?client_id=00000003-0000-0ff1-ce00-000000000000&response_mode=form_post&protectedtoken=true&response_type=code%20id_token&resource=00000003-0000-0ff1-ce00-000000000000&scope=openid&nonce=38ED8594854A8E55B64C1E85F4CC5935E6231FD9C6F33FAB-337465C541E5E6CEEED864190B9D69429311F014EE46C6C7A3B86E53EB7DBB4F&redirect_uri=https%3A%2F%2Fcrukci-my.sharepoint.com%2F_forms%2Fdefault.aspx&state=OD0w&claims=%7B%22id_token%22%3A%7B%22xms_cc%22%3A%7B%22values%22%3A%5B%22CP1%22%5D%7D%7D%7D&wsucxt=1&cobrandid=11bd8083-87e0-41b5-bb78-0bc43c8a8e8a&client-request-id=373b37a0-80c7-3000-e55a-8efd41e1c82b)
-### Week 2
+
+
+### Week 2 
 
 * Quality Control and Filtering - Chandra Chilamakuri
   + [Practical](Markdowns/04_Preprocessing_And_QC.html)
   + [Practical Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%202%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20taught%20session%2D20220426%5F113253%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
   + [Exercise](Markdowns/04_Preprocessing_And_QC.Exercise.html) 
   + [Exercise Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%202%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20clinic%20session%2D20220429%5F140517%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
-### Week 3
+
+### Week 3 
 
 * Normalisation - Kamal Kishore
   + [Slides](Slides/Normalization.pdf)
