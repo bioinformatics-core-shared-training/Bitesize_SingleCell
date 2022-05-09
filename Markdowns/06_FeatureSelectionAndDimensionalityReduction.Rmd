@@ -1,20 +1,20 @@
 ---
 title: "Introduction to single-cell RNA-seq analysis"
-author: "Stephane Ballereau, Zeynep Kalender Atak, Hugo Tavares"
-date: "Nov 2021"
+author: "Chandra Chilamakuri, Stephane Ballereau, Zeynep Kalender Atak, Hugo Tavares"
+date: "May 2022"
 output:
   html_document:
     df_print: paged
     toc: yes
     toc_depth: 3
     number_sections: true
-    css: ../css/boxes.css
+    css: ../../css/boxes.css
 subtitle: Feature Selection and Dimensionality Reduction
 ---
 
 ```{r setup, echo=FALSE, include=FALSE, message=FALSE, purl=FALSE}
-knitr::opts_knit$set(root.dir = here::here("CourseMaterials"))
-knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE, cache=TRUE)
+#knitr::opts_knit$set(root.dir = here::here("CourseMaterials"))
+#knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE, cache=TRUE)
 # knitr::opts_chunk$set(fig.width=7, fig.height=7)
 # knitr::opts_chunk$set(dev="CairoPNG")
 set.seed(123)
@@ -42,7 +42,7 @@ We will load the _SingleCellExperiment_ object generated in the [Normalisation](
 
 ```{r, cache=FALSE}
 # read data ----
-sce <- readRDS("Robjects/caron_postDeconv_5hCellPerSpl.Rds")
+sce <- readRDS("../Robjects/caron_postDeconv_5hCellPerSpl.rds")
 sce
 ```
 
@@ -247,7 +247,7 @@ Here is an example, where we facet our plot:
 # more custom visualisations with ggcells (e.g. add facets)
 ggcells(sce, aes(x = PCA.1, y = PCA.2, colour = SampleName)) +
   geom_point(size = 0.5) +
-  facet_wrap(~ SampleName) +
+  facet_wrap( vars(SampleName)) +
   labs(x = "PC1", y = "PC2", colour = "Sample")
 ```
 
@@ -349,29 +349,6 @@ If we look at our PCA result, we can see that it has 7 columns, which is close e
 ncol(reducedDim(sce, "PCA"))
 ```
 
-#### Permutation
-
-We do not demonstrate this method, as it is more code intensive. 
-But the general idea is to permute (or "shuffle") a subset of the data, rerun the PCA and calculate the percentage of variance explained by each PC on this "random" dataset. 
-We can then compare the observed variance explained in the original data with this null or random expectation and determine a cutoff where the observed variance explained drops to similar values as the variance explained in the shuffled data. 
-
-```{r permutation_example, echo=FALSE, purl=FALSE}
-# mock example
-pca_pct_variance %>% 
-  mutate(Permuted = 1) %>% 
-  rename(Observed = variance) %>% 
-  pivot_longer(c(Observed, Permuted), values_to = "variance") %>% 
-  ggplot(aes(PC, variance)) +
-  geom_col(aes(fill = name), position = position_dodge()) +
-  geom_vline(xintercept = 8, linetype = 2) +
-  annotate(geom = "text", x = 8.1, y = 5, label = "PC8", hjust = 0) +
-  labs(fill = "", y = "% variance explained") +
-  scale_fill_brewer(palette = "Dark2") +
-  theme_minimal() +
-  theme(legend.position = c(1, 1), legend.justification = c(1, 1))
-```
-
-In this example (which is for illustration only) we may define a threshold at PC8, since after that the variance explained in the observed data drops below the levels in the permuted (randomised) data.
 
 
 ## t-SNE: t-Distributed Stochastic Neighbor Embedding
@@ -763,58 +740,16 @@ This is useful as it will save time next time we pick up on our analysis.
 
 ```{r, eval=FALSE, purl=FALSE}
 # save sce object to which we have added dimensionality reduction slots:
-saveRDS(sce, "~/Course_Materials/scRNAseq/Robjects/caron_postDeconv_5hCellPerSpl_dimRed.Rds")
+saveRDS(sce, "../Robjects/caron_postDeconv_5hCellPerSpl_dimRed.Rds")
 ```
 
 
-# Extra: feature selection and dimensionality reduction with `Seurat`
 
-<details><summary>Using the `Seurat` package</summary>
 
-Seurat is another very popular scRNA-seq analysis package and provides useful tools for analysing PCA loadings. We will convert our `SCE` object to a `Seurat` object to use these tools. 
 
-```{r, purl=FALSE}
-# read our original SCE object
-sce <- readRDS("Robjects/caron_postDeconv_5hCellPerSpl.Rds")
 
-# convert SCE object to a Seurat object 
-library(Seurat)
-seurat_obj <- as.Seurat(sce, counts = "counts", data = "logcounts")
 
-# identify the 2000 most highly-variable genes
-seurat_hvgs <- FindVariableFeatures(seurat_obj, selection.method = "vst", nfeatures = 2000)
 
-# scale the data for PCA for the highly variable genes 
-seurat_obj <- ScaleData(seurat_obj, features = VariableFeatures(seurat_hvgs))
-
-# run PCA 
-seurat_obj <- RunPCA(seurat_obj, features = VariableFeatures(seurat_hvgs), 
-                     verbose = FALSE)
-
-# PCA Plot 
-DimPlot(seurat_obj, reduction = "pca")
-```
-
-We can see that the PCA is similar to what we obtained before (there are some differences, which are related to how the variable genes were chosen in this case). 
-
-To visualise the top most correlated genes with each PC, we can use the following:
-
-```{r, purl=FALSE}
-VizDimLoadings(seurat_obj, dims=1:2)
-```
-
-This shows the genes that have highest loading (correlation) with each PC axis. 
-If we know something about the biology of the system we are studying, these may give some clues as to what is driving the separation of cells along each PC axis. 
-
-The loadings can also be visualised as a heatmap, showing the cells ordered by the PC scores and the genes ordered by their loading along that PC:
-
-```{r, purl=FALSE}
-DimHeatmap(seurat_obj, dims = 1:2, cells = 500, balanced = TRUE)
-```
-
-Look at [`Seurat`'s excellent documentation](https://satijalab.org/seurat/index.html) to learn more about this and other uses of this package. 
-
-</details>
 
 # Key Points and Resources
 

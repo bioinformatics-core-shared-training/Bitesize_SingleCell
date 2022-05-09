@@ -102,6 +102,8 @@ Tuesday Session
 ### Week 4
 
 * Feature selection and Dimensionality Reduction - Chandra Chilamakuri
+  + [Slides](Slides/06_FeatureSelectionAndDimensionalityReduction_slides.html)
+  + [Practical/Exercises](Markdowns/06_FeatureSelectionAndDimensionalityReduction.html)
 
 ### Week 5
 

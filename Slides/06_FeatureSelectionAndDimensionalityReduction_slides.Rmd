@@ -1,7 +1,7 @@
 ---
 title: "Feature Selection and Dimensionality Reduction"
-author: "Hugo Tavares"
-date: 'Nov 2021'
+author: "Hugo Tavares, Chandra Chilamakuri"
+date: 'May 2022'
 output:
   ioslides_presentation:
     widescreen: true
@@ -17,23 +17,16 @@ output:
 knitr::include_graphics('Images/workflow2_dimensReduc.png')
 ```
 
-## Dimensionality reduction
+## Why do high-dimensional data pose a problem?
 
-* Cells are characterized by the expression values of all genes --> thousands of dimensions 
+<img src="http://www.nlpca.org/fig_pca_principal_component_analysis.png" alt="Expression space" style="width:600px;">
 
-* Simplify complexity, so it becomes easier to work with (reduce the number of features/genes).
-  
-  + Making clustering step easier 
-  
-  + Making visualization easier 
+* Single cell analysis is aimed at cluster the cells according to their gene expression
+* Thousands of genes across the cells
+* Problem with high-dimensional data
+  * Human intuition and understanding is limited to a three dimensional world
+  * As we increase the number of Dimensions, our data becomes more sparse. The average distance in between two points of our data set is increased and invariant. 
 
-* Remove redundancies in the data
-
-  + Expression of many genes are correlated, we don't need so many dimensions to distinguish cell types 
-  
-  + Identify the most relevant information and overcome the extensive technical noise in scRNA-seq data 
-
-* Reduce computational time for downstream procedures
 
 
 ## There are many dimensionality reduction algorithms 
