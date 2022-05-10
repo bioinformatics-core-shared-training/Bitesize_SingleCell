@@ -109,6 +109,9 @@ Tuesday Session
 * Feature selection and Dimensionality Reduction - Chandra Chilamakuri
   + [Slides](Slides/06_FeatureSelectionAndDimensionalityReduction_slides.html)
   + [Practical/Exercises](Markdowns/06_FeatureSelectionAndDimensionalityReduction.html)
+  + [Recording](https://crukci-my.sharepoint.com/personal/abigail_edwards_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fabigail%5Fedwards%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%204%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20taught%20session%2D20220510%5F113243%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fabigail%5Fedwards%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
+
+
 
 ### Week 5
 
