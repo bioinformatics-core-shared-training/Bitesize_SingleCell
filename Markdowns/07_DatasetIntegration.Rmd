@@ -1,6 +1,6 @@
 ---
-title: "CRUK CI Summer School 2022 - introduction to single-cell RNA-seq analysis"
-subtitle: 'Dataset Integration'
+title: "CRUK CI Bitesize Introduction to Single Cell RNASeq Analysis"
+subtitle: 'Dataset Integration and Batch Correction'
 author: "Abbi Edwards"
 output:
   html_document:
@@ -11,15 +11,15 @@ output:
     css: ../css/boxes.css
 ---
 
-# Data integration - PBMMC and ETV6-RUNX samples
+## Why do we need Data Integration and Batch Correction?
 
+Large single-cell RNA sequencing (scRNA-seq) projects usually need to generate data across multiple batches due to logistical constraints. However, the processing of different batches is often subject to uncontrollable differences, e.g., changes in operator, differences in reagent quality. This results in systematic differences in the observed expression in cells from different batches, which we refer to as “batch effects”. Batch effects are problematic as they can be major drivers of heterogeneity in the data, masking the relevant biological differences and complicating interpretation of the results.
 
-## Learning Objectives
+Computational removal of batch-to-batch variation allows us to combine data across multiple batches for a consolidated downstream analysis. However, existing methods based on linear models (Ritchie et al. 2015; Leek et al. 2012) assume that the composition of cell populations are either known or the same across batches. To overcome these limitations, bespoke methods have been developed for batch correction of single-cell data (Haghverdi et al. 2018; Butler et al. 2018; Lin et al. 2019) that do not require a priori knowledge about the composition of the population. This allows them to be used in workflows for exploratory analyses of scRNA-seq data where such knowledge is usually unavailable.
 
-* Understand why/when batch correction is required
-* Understand where data set integration fits in the workflow
-* Understand one main method for batch correction
-* Understand how to check your batch correction has worked
+## Test Data Demonstration
+
+This is the demonstration Abbi will run through in the taught session. You can use this as a jumping off point for this weeks exercise (details at the bottom of the page). Remember to `rsync` your `Course_Materials` directory to get the latest files before you start.
 
 ```{r library_PBMMC_ETV6-RUNX1, warning=FALSE, message=FALSE}
 library(scater)
@@ -28,19 +28,10 @@ library(batchelor)
 library(bluster)
 library(tidyverse)
 library(pheatmap)
-library(clustree)
 library(Cairo)
 library(BiocSingular)
 library(cowplot)
 ```
-
-Source: ['Integrating Datasets'](https://osca.bioconductor.org/integrating-datasets.html) chapter in the OSCA book.
-
-## Motivation
-
-Large single-cell RNA sequencing (scRNA-seq) projects usually need to generate data across multiple batches due to logistical constraints. However, the processing of different batches is often subject to uncontrollable differences, e.g., changes in operator, differences in reagent quality. This results in systematic differences in the observed expression in cells from different batches, which we refer to as “batch effects”. Batch effects are problematic as they can be major drivers of heterogeneity in the data, masking the relevant biological differences and complicating interpretation of the results.
-
-Computational removal of batch-to-batch variation allows us to combine data across multiple batches for a consolidated downstream analysis. However, existing methods based on linear models (Ritchie et al. 2015; Leek et al. 2012) assume that the composition of cell populations are either known or the same across batches. To overcome these limitations, bespoke methods have been developed for batch correction of single-cell data (Haghverdi et al. 2018; Butler et al. 2018; Lin et al. 2019) that do not require a priori knowledge about the composition of the population. This allows them to be used in workflows for exploratory analyses of scRNA-seq data where such knowledge is usually unavailable.
 
 ## Load the data
 
@@ -254,7 +245,7 @@ Run quickCorrect on our new SingleCellExperiment object treating each individual
 
 <details><summary>Hint</summary>
  
-When you use a single `sce` object you must specify what you want to use as a batch using the `batch = ` argument. See the Help page for more details.
+
 
 </details>
 
@@ -417,6 +408,19 @@ metadata(mnn.out)$merge.info$lost.var
 ```
 
 Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity. This would occur due to violations of the assumption of orthogonality between the batch effect and the biological subspace (Haghverdi et al. 2018). In this case, the proportion of lost variance is smaller, indicating that non-orthogonality is not to much of a major concern.
+
+# Exercise for this week
+
+Remember to `rsync` your `Course_Materials` directory to get the latest files before you start.
+
+Have a go at running the data integration and batch corrections on the data we have generated so far from the previous weeks. You should find a file in RObjects called `` which contains the data processed up until this point if you haven't got that far yet.
+
+Import your data and have a look at it uncorrected.
+
+Try the batch correction, there are many different parameters you can change here, which do you think are most suitable for this data? Compare it visually to the uncorrected data. (HINT: When you use a single `sce` object with `quickCorrect` you must specify what you want to use as a batch using the `batch = ` argument. See the Help page for more details.)
+
+
+Explore the different diagnostics we have demonstrated or have a look in the OSCA book which details more.
 
 ## Session information
 
