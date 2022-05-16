@@ -116,6 +116,9 @@ Tuesday Session
 ### Week 5
 
 * Batch Correction and Data Set Integration - Abbi Edwards
+  + [Slides](Slides/07_DataIntegrationAndBatchCorrectionSlides.html)
+  + [Demo/Exercise](Markdowns/07_DatasetIntegration.html)
+  <!-- + [Suggested Solution]() -->
 
 ### Week 6
 
