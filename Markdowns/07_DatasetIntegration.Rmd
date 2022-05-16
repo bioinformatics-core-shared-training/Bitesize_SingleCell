@@ -28,7 +28,6 @@ library(batchelor)
 library(bluster)
 library(tidyverse)
 library(pheatmap)
-library(Cairo)
 library(BiocSingular)
 library(cowplot)
 ```
@@ -225,69 +224,23 @@ plotTSNE(quick.sce, colour_by="batch")
 
 ## Multiple Batches
 
-The above example showed two samples or 'batches' but it will often be the case that we have many samples or batches. It is straightforward to simultaneously perform correction across >2 batches, either by having multiple levels in batch= or by providing more SingleCellExperiment objects (or even raw matrices of expression values). Lets try this out with more of the samples from our dataset.
+This example showed two samples or 'batches' but it will often be the case that we have many samples or batches. It is straightforward to simultaneously perform correction across >2 batches, either by having multiple levels in batch= or by providing more SingleCellExperiment objects (or even raw matrices of expression values). You can try this out with more of the samples from our dataset.
 
-### Load Data
-
-This is a large list of 7 SingleCellExperiment objects from our dataset that have been processed as discussed in the previous sessions and downsampled to 500 cells per sample for processing speed.
-
-```{r}
-# ETV6_RUNX1 and PBMMC dataset
-all.sce <- readRDS("../Robjects/DataIntegration_all_sce_dimred.Rds")
-all.sce
-```
-
-## Exercise 1
-
-:::exercise
-
-Run quickCorrect on our new SingleCellExperiment object treating each individual sample as a batch.
-
-<details><summary>Hint</summary>
- 
-
-
-</details>
-
-<details><summary>Answer</summary>
-```{r}
-quick.corrected.all <- quickCorrect(all.sce, batch = all.sce$SampleName)
-
-quick.sce.all <- quick.corrected.all$corrected
-
-quick.sce.all
-```
-</details>
-
-:::
-
-## Exercise 2
-
-:::exercise
-
-Plot the t-SNE of your corrected data and compare it to the uncorrected data.
-
-![uncorrected](Images/uncorrected_tsne.png)
-
-<details><summary>Answer</summary>
-```{r}
-set.seed(0010101011)
-quick.sce.all <- runTSNE(quick.sce.all, dimred="corrected")
-quick.sce.all$batch <- factor(quick.sce.all$batch)
-plotTSNE(quick.sce.all, colour_by="batch")
-```
-</details>
-
-:::
+## Retrieving the metadata
 
 When running the correction it is important to note that the metadata stored in the `colData` of the input object will not be present in the output object. We have to recreate this if we want to use it later. We can easily do this as the output object will be ordered the same as the input.
 
 ```{r}
-meta <- colData(all.sce) %>%
+
+meta <- colData(uncorrected) %>%
   as.data.frame() %>%
   DataFrame()
+  
+colData(quick.sce) <- meta
 
-colData(quick.sce.all) <- meta
+quick.snn.gr <- buildSNNGraph(quick.sce, use.dimred="corrected")
+quick.clusters <- igraph::cluster_walktrap(quick.snn.gr)$membership
+quick.sce$Cluster <- factor(quick.clusters)
   
 ```
 
@@ -300,22 +253,23 @@ Ideally, batch correction would remove the differences between batches while pre
 We cluster on the low-dimensional corrected coordinates to obtain a partitioning of the cells that serves as a proxy for the population structure. If the batch effect is successfully corrected, clusters corresponding to shared cell types or states should contain cells from multiple batches. 
 
 ```{r}
-all.snn.gr <- buildSNNGraph(quick.sce.all, use.dimred="corrected", k=20)
-clusters.all <- igraph::cluster_walktrap(all.snn.gr)$membership
-colLabels(quick.sce.all) <- factor(clusters.all)
+quick.snn.gr <- buildSNNGraph(quick.sce, use.dimred="corrected")
+quick.clusters <- igraph::cluster_walktrap(quick.snn.gr)$membership
+quick.sce$Cluster <- factor(quick.clusters)
+colLabels(quick.sce) <- factor(quick.clusters)
 
-clusterTab.all <- data.frame(clusters=clusters.all, batch=quick.sce.all$SampleName, source=quick.sce.all$SampleGroup)
+clusterTab.quick <- data.frame(clusters=quick.clusters, batch=quick.sce$batch)
 
-all.tab <- table(Cluster=clusters.all, Batch=quick.sce.all$SampleName)
-all.tab
+tab <- table(Cluster=quick.clusters, Batch=quick.sce$batch)
+tab
 ```
 
 ```{r}
-ClusterInfo.all <- data.frame(Cluster=clusters.all, Batch=quick.sce.all$SampleName, source=quick.sce.all$SampleGroup) %>%
+ClusterInfo.quick <- data.frame(Cluster=quick.clusters, Batch=quick.sce$batch) %>%
   group_by(Cluster,Batch) %>%
   summarise(cells = n())
 
-ggplot(data=ClusterInfo.all, aes(x=Cluster,y=cells, fill=Batch)) +
+ggplot(data=ClusterInfo.quick, aes(x=Cluster,y=cells, fill=Batch)) +
 	theme(axis.text.x=element_text(angle = 90, hjust = 0)) +
 	geom_col() +
 	theme(legend.text = element_text(size = 7))
@@ -325,10 +279,10 @@ ggplot(data=ClusterInfo.all, aes(x=Cluster,y=cells, fill=Batch)) +
 The OSCA book favors a qualitative approach to assessing the degree of mixing between clusters where they compute the variance in the log-normalized abundances across batches for each cluster. A highly variable cluster has large relative differences in cell abundance across batches; this may be an indicator for incomplete batch correction, e.g., if the same cell type in two batches was not combined into a single cluster in the corrected data. We can then focus our attention on these clusters to determine whether they might pose a problem for downstream interpretation. Of course, a large variance can also be caused by genuinely batch-specific populations, so some prior knowledge about the biological context is necessary to distinguish between these two possibilities.
 
 ```{r}
-var <- clusterAbundanceVar(all.tab)
+var <- clusterAbundanceVar(tab)
 
 # Also printing the percentage of cells in each cluster in each batch:
-percent <- t(t(all.tab)/colSums(all.tab)) * 100 
+percent <- t(t(tab)/colSums(tab)) * 100 
 df <- DataFrame(Batch=unclass(percent), var=var)
 df[order(df$var, decreasing=TRUE),]
 
@@ -336,7 +290,7 @@ df[order(df$var, decreasing=TRUE),]
 
 ### Preserving Biological Heterogeneity
 
-Another useful diagnostic check is to compare the pre-correction clustering of each batch to the clustering of the same cells in the corrected data. Accurate data integration should preserve population structure within each batch as there is no batch effect to remove between cells in the same batch. This check complements the previously mentioned diagnostics that only focus on the removal of differences between batches. Specifically, it protects us against scenarios where the correction method simply aggregates all cells together, which would achieve perfect mixing but also discard the biological heterogeneity of interest. Lets go back to our simple two sample example to look at some of the ways we can investigate.
+Another useful diagnostic check is to compare the pre-correction clustering of each batch to the clustering of the same cells in the corrected data. Accurate data integration should preserve population structure within each batch as there is no batch effect to remove between cells in the same batch. This check complements the previously mentioned diagnostics that only focus on the removal of differences between batches. Specifically, it protects us against scenarios where the correction method simply aggregates all cells together, which would achieve perfect mixing but also discard the biological heterogeneity of interest. 
 
 ```{r}
 table(colLabels(ori.sce.sample.1))
@@ -404,7 +358,7 @@ gridExtra::grid.arrange(heat.1[[4]], heat.2[[4]])
 For fastMNN(), one useful diagnostic is the proportion of variance within each batch that is lost during MNN correction. Specifically, this refers to the within-batch variance that is removed during orthogonalization with respect to the average correction vector at each merge step. This is returned via the lost.var field in the metadata of mnn.out, which contains a matrix of the variance lost in each batch (column) at each merge step (row).
 
 ```{r}
-metadata(mnn.out)$merge.info$lost.var
+metadata(quick.sce)$merge.info$lost.var
 ```
 
 Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity. This would occur due to violations of the assumption of orthogonality between the batch effect and the biological subspace (Haghverdi et al. 2018). In this case, the proportion of lost variance is smaller, indicating that non-orthogonality is not to much of a major concern.
@@ -413,9 +367,9 @@ Large proportions of lost variance (>10%) suggest that correction is removing ge
 
 Remember to `rsync` your `Course_Materials` directory to get the latest files before you start.
 
-Have a go at running the data integration and batch corrections on the data we have generated so far from the previous weeks. You should find a file in RObjects called `` which contains the data processed up until this point if you haven't got that far yet.
+Have a go at running the data integration and batch corrections on the data we have generated so far from the previous weeks. You can also find a file in RObjects called `07_semiprocessedCaronSamples.rds` which contains the Caron data processed up until this point if you would just like to try out the functions in this section.
 
-Import your data and have a look at it uncorrected.
+Import the data and have a look at it uncorrected.
 
 Try the batch correction, there are many different parameters you can change here, which do you think are most suitable for this data? Compare it visually to the uncorrected data. (HINT: When you use a single `sce` object with `quickCorrect` you must specify what you want to use as a batch using the `batch = ` argument. See the Help page for more details.)
 
