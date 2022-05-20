@@ -119,8 +119,8 @@ Tuesday Session
   + [Slides](Slides/07_DataIntegrationAndBatchCorrectionSlides.html)
   + [Demo/Exercise](Markdowns/07_DatasetIntegration.html)
   + [Recording of taught session](https://crukci-my.sharepoint.com/:v:/r/personal/abigail_edwards_cruk_cam_ac_uk/Documents/Recordings/Week%205%20-%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20-%20taught%20session-20220517_113135-Meeting%20Recording.mp4?csf=1&web=1&e=pvTzU1) 
-  
-  <!-- + [Suggested Solution]() -->
+  + [Recording of Clinic](https://crukci-my.sharepoint.com/:v:/r/personal/abigail_edwards_cruk_cam_ac_uk/Documents/Recordings/Week%205%20-%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20-%20clinic%20session-20220520_140453-Meeting%20Recording.mp4?csf=1&web=1&e=Jv4cEF)
+  + [Suggested Solution](Markdowns/07_DatasetIntegration_clinic.html)
 
 ### Week 6
 
