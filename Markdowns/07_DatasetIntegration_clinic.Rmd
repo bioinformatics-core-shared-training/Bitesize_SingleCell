@@ -1,0 +1,213 @@
+---
+title: "CRUK CI Bitesize Introduction to Single Cell RNASeq Analysis"
+subtitle: 'Dataset Integration and Batch Correction - clinic session'
+author: "Abbi Edwards"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    number_sections: true
+    code_folding: show
+    css: ../css/boxes.css
+---
+
+# Data integration - PBMMC and ETV6-RUNX samples
+
+```{r library_PBMMC_ETV6-RUNX1, warning=FALSE, message=FALSE}
+library(scater)
+library(scran)
+library(batchelor)
+library(bluster)
+library(tidyverse)
+library(pheatmap)
+library(BiocSingular)
+```
+
+## Load the data
+
+We are loading a single `sce` object containing the 7 Caron samples. The data has been processed as detailed in previous weeks and downsampled to 500 cells per sample for demonstration purposes.
+
+```{r, loadSamples}
+all.sce <- readRDS("../Robjects/DataIntegration_all_sce_dimred.Rds")
+all.sce
+```
+
+## View the uncorrected data
+
+Before we actually perform any correction, it is worth examining whether there is any batch effect in this dataset.The PCA, TSNE and UMAP have already been run but we can do some quick clustering just so we can see things a bit better and this will be needed for the diagnostics later.
+
+```{r}
+uncorrected.snn.gr <- buildSNNGraph(all.sce, use.dimred="PCA")
+uncorrected.clusters <- igraph::cluster_walktrap(uncorrected.snn.gr)$membership
+colLabels(all.sce) <- factor(uncorrected.clusters)
+all.sce$Cluster <- factor(uncorrected.clusters)
+uncorrected.tab <- table(Cluster=uncorrected.clusters, Batch=all.sce$SampleName)
+uncorrected.tab
+```
+
+
+```{r}
+plotTSNE(all.sce, colour_by="SampleName")
+```
+
+Reminder: Of course, the other explanation for batch-specific clusters is that there are cell types that are unique to each batch. 
+
+## Correct the data - quickCorrect wrapper
+
+```{r}
+quick.corrected.all <- quickCorrect(all.sce, batch = all.sce$SampleName)
+
+quick.sce.all <- quick.corrected.all$corrected
+
+quick.sce.all
+```
+
+## Visualise the corrected data
+
+```{r}
+set.seed(0010101011)
+quick.sce.all <- runTSNE(quick.sce.all, dimred="corrected")
+quick.sce.all$SampleName <- factor(all.sce$SampleName)
+plotTSNE(quick.sce.all, colour_by="SampleName")
+```
+
+
+## Retrieve the metadata
+
+```{r}
+meta <- colData(all.sce) %>%
+  as.data.frame() %>%
+  DataFrame()
+
+colData(quick.sce.all) <- meta
+  
+```
+
+## Correction Diagnostics
+
+### Mixing Between Batches
+
+Get the cluster information 
+
+```{r}
+all.snn.gr <- buildSNNGraph(quick.sce.all, use.dimred="corrected", k=20)
+clusters.all <- igraph::cluster_walktrap(all.snn.gr)$membership
+colLabels(quick.sce.all) <- factor(clusters.all)
+quick.sce.all$Cluster <- factor(clusters.all)
+
+clusterTab.all <- data.frame(clusters=clusters.all, batch=quick.sce.all$SampleName, source=quick.sce.all$SampleGroup)
+
+all.tab <- table(Cluster=clusters.all, Batch=quick.sce.all$SampleName)
+all.tab
+```
+
+```{r}
+plotTSNE(quick.sce.all, colour_by="Cluster") + 
+  facet_wrap(~colData(quick.sce.all)$SampleName)
+```
+
+```{r}
+ClusterInfo.all <- data.frame(Cluster=clusters.all, Batch=quick.sce.all$SampleName, source=quick.sce.all$SampleGroup) %>%
+  group_by(Cluster,Batch) %>%
+  summarise(cells = n())
+
+ggplot(data=ClusterInfo.all, aes(x=Cluster,y=cells, fill=Batch)) +
+	theme(axis.text.x=element_text(angle = 90, hjust = 0)) +
+	geom_col() +
+	theme(legend.text = element_text(size = 7))
+
+```
+
+
+```{r}
+var <- clusterAbundanceVar(all.tab)
+
+# Also printing the percentage of cells in each cluster in each batch:
+percent <- t(t(all.tab)/colSums(all.tab)) * 100 
+df <- DataFrame(Batch=unclass(percent), var=var)
+df[order(df$var, decreasing=TRUE),]
+
+```
+
+### Preserving Biological Heterogeneity
+
+Comparing the clustering pre and post correction
+
+```{r}
+
+# PBMMC 1b
+
+only_PBMMC1b <- all.sce[,all.sce$SampleName == "PBMMC_1b"]
+
+tab.sample.PBMMC1b <- nestedClusters(ref=paste("before", colLabels(only_PBMMC1b)),
+    alt=paste("after", clusters.all[quick.sce.all$SampleName=="PBMMC_1b"]))
+tab.sample.PBMMC1b$alt.mapping
+```
+
+```{r}
+# ETV6-RUNX1_1
+
+only_ETV6RUNX1_1 <- all.sce[,all.sce$SampleName == "ETV6-RUNX1_1"]
+
+tab.sample.ETV6RUNX1_1 <- nestedClusters(ref=paste("before", colLabels(only_ETV6RUNX1_1)),
+    alt=paste("after", clusters.all[quick.sce.all$SampleName=="ETV6-RUNX1_1"]))
+tab.sample.ETV6RUNX1_1$alt.mapping
+```
+
+We can visualize this mapping for the samples. 
+
+```{r}
+# For the first sample:
+heat.sample.1 <- pheatmap(tab.sample.PBMMC1b$proportions, cluster_row=FALSE, cluster_col=FALSE,
+                   main="Sample 1 comparison", silent=TRUE)
+
+# For the second sample:
+heat.sample.2 <- pheatmap(tab.sample.ETV6RUNX1_1$proportions, cluster_row=FALSE, cluster_col=FALSE,
+                   main="Sample 2 comparison", silent=TRUE)
+
+gridExtra::grid.arrange(heat.sample.1[[4]], heat.sample.2[[4]])
+```
+
+## Adjusted Rand index 
+
+```{r}
+ri.sample.1 <- pairwiseRand(clusters.all[quick.sce.all$SampleName=="PBMMC_1b"], colLabels(only_PBMMC1b), mode="index")
+ri.sample.1
+```
+
+```{r}
+ri.sample.2 <- pairwiseRand(clusters.all[quick.sce.all$SampleName=="ETV6-RUNX1_1"], colLabels(only_ETV6RUNX1_1), mode="index")
+ri.sample.2
+```
+
+ARI on per-cluster level
+
+```{r}
+# For the first batch.
+tab1 <- pairwiseRand(uncorrected.clusters[all.sce$SampleName=="PBMMC_1b"], clusters.all[quick.sce.all$SampleName=="PBMMC_1b"])
+heat.1 <- pheatmap(tab1, cluster_row=FALSE, cluster_col=FALSE,
+    col=rev(viridis::magma(100)), main="PBMMC_1b probabilities", silent=TRUE)
+
+# For the second batch.
+tab2 <- pairwiseRand(uncorrected.clusters[all.sce$SampleName=="ETV6-RUNX1_1"], clusters.all[quick.sce.all$SampleName=="ETV6-RUNX1_1"])
+heat.2 <- pheatmap(tab2, cluster_row=FALSE, cluster_col=FALSE,
+    col=rev(viridis::magma(100)), main="ETV6-RUNX1_1 probabilities", silent=TRUE)
+
+gridExtra::grid.arrange(heat.1[[4]], heat.2[[4]])
+
+```
+
+### MNN specific test
+
+lost variance
+
+```{r}
+metadata(quick.sce.all)$merge.info$lost.var
+```
+
+
+## Session information
+
+```{r sessionInfo_dsi_PBMMC_ETV6-RUNX1}
+sessionInfo()
+```
