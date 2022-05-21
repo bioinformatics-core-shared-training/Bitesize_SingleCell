@@ -1,8 +1,8 @@
 ---
 title: "Introduction to single-cell RNA-seq analysis"
 subtitle: "Cluster marker genes"
-date: "May 2021"
-author: "Ashley Sawle, Stephane Ballereau, Zeynep Kalender Atak, Hugo Tavares"
+date: "Nov 2021"
+author: "Stephane Ballereau, Zeynep Kalender Atak, Hugo Tavares"
 output:
   html_document:
     df_print: paged
@@ -26,38 +26,41 @@ set.seed(123)
 
 # Introduction {#clusterMarkerGenesTop}
 
-In order to aid the interpretation of the clustering results, it is helpful to
-identify genes that are contributing to the separation of cells into those
-clusters.
+In order to aid the interpretation of the clustering results we covered in the [previous section](08_ClusteringPostDsi.html), it is helpful to identify genes that are contributing to the separation of cells into those clusters. 
 
-The main approach to achieve this, is to identify genes that are differently
-expressed between clusters. These may be, for example, exclusively expressed in
-a single cluster or perhaps differentiate between a few different clusters.
-There are different methods to identify differentially expressed genes, focusing
-on differences between the mean expression level, or the probability of
-expression between clusters or take the whole distribution of expression into
-account.
+The main approach to achieve this, is to identify genes that are differently expressed between clusters. 
+These may be, for example, exclusively expressed in a single cluster or perhaps differentiate between a few different clusters. 
+There are different methods to identify differentially expressed genes, focusing on differences between the mean expression level, or the probability of expression between clusters or take the whole distribution of expression into account. 
 
-Our main objective in this section is to cover some of the methods that can be
-used to achieve this goal, and obtain a summary table of results.
+Our main objective in this section is to cover some of the methods that can be used to achieve this goal, and obtain a summary table of results.
 
-As always, the [OSCA chapter on marker detection](https://bioconductor.org/books/release/OSCA/marker-detection.html) contains additional detail and advice.
+
+<!--
+[Hugo: commenting this out as it is transcribed from OSCA book so can just be linked to it]
+
+Source: we will follow the [OSCA chapter on marker detection](https://bioconductor.org/books/release/OSCA/marker-detection.html) (with some of its text copied here with little modification). See also the Hemberg group chapter on [differential analysis section](https://scrnaseq-course.cog.sanger.ac.uk/website/biological-analysis.html#dechapter).
+
+To interpret our clustering results, we identify the genes that drive separation between clusters. These marker genes allow us to assign biological meaning to each cluster based on their functional annotation. In the most obvious case, the marker genes for each cluster are a priori associated with particular cell types, allowing us to treat the clustering as a proxy for cell type identity. The same principle can be applied to discover more subtle differences between clusters (e.g., changes in activation or differentiation state) based on the behavior of genes in the affected pathways.
+
+Identification of marker genes is usually based around the retrospective detection of differential expression between clusters. Genes that are more strongly DE are more likely to have caused separate clustering of cells in the first place. Several different statistical tests are available to quantify the differences in expression profiles, and different approaches can be used to consolidate test results into a single ranking of genes for each cluster.
+-->
 
 # Setup
 
 Before we start, let's load our packages and read our data in. 
 
-```{r packages, results='hide', message=FALSE, warning=FALSE}
+```{r library_clusterMarkerGenes, results='hide', message=FALSE, warning=FALSE}
+# Load packages ----
 library(scater)
 library(scran)
 library(pheatmap)
-library(tidyverse)
+library(tidyverse) # always load tidyverse after other packages
 ```
 
 We will load two _SingleCellExperiment_ objects generated in previous sections:
 
 - The SCE with logcounts normalised within each batch generated in the [Batch Correction](07_BatchCorrection.html) section.
-- The SCE with batch-corrected data integration using the `batchelor::fastMNN()` algorithm, including clusters covered in the [Clustering](08_Clustering.html) section.
+- The SCE with batch-corrected data integration using the `batchelor::fastMNN()` algorithm, including clusters covered in the [Clustering](08_ClusteringPostDsi.html) section.
 
 ```{r}
 # Read data ----
