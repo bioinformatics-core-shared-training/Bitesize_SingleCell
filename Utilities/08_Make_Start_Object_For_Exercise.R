@@ -8,9 +8,6 @@ library(BiocSingular)
 sce <- readRDS("../Robjects/Caron_filtered_genes.rds")
 sce
 
-sce2 <- readRDS("../Robjects/DataIntegration_all_sce_dimred.Rds")
-sce2
-
 colData(sce) %>%
   as.data.frame() %>% 
   count(Sample)

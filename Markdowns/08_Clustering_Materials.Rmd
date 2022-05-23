@@ -619,106 +619,65 @@ pTSNE
 ```
 
 Having identified clusters, we now display the level of expression of cell type
-marker genes to quickly match clusters with cell types (e.g. MS4A1 for B cell
-marker gene). For each marker we will plot its expression on a t-SNE, and show
-distribution across each cluster on a violin plot.
+marker genes to quickly match clusters with cell types. For each marker we will
+plot its expression on a t-SNE, and show distribution across each cluster on a
+violin plot.
+
+We will be using gene symbols to identify the marker genes, so we will switch the
+rownames in the SCE object to be gene symbols. We use the scate function
+`uniquifyFeatureNames` to do this as there are a few duplicated gene symbols.
 
 ```{r}
-markGenesFull <- list(
-  "Naive CD4+ T cells"=c("IL7R", "CCR7"),
-  "Memory CD4+ T cells"=c("IL7R", "S100A4"),
-  "B cells"=c("MS4A1", "CD79A"),
-  "CD8+ T cells"=c("CD8A"),
-  "NK cells"=c("GNLY", "NKG7"),
-  "CD14+ Monocytes"=c("CD14", "LYZ"),
-  "FCGR3A+ Monocytes"=c("FCGR3A", "MS4A7"),
-  "Dendritic Cells"=c("FCER1A", "CST3"),
-  "Platelets"=c("PPBP")
-)
+rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ID, rowData(sce)$Symbol)
 ```
 
-```{r, fig.width=10, fig.height=5}
-plotMarkers <- function(ctx, sceObj=sce, genes=markGenesFull) {
-  
-    genes <- genes[[ctx]]
-  
-    pTSNE <- plotTSNE(sceObj, colour_by = "walktrap20") +
-               ggtitle("Walktrap clusters")
-    p1 <- plotTSNE(sceObj, by_exprs_values = "reconstructed", colour_by = genes[1]) +
-              ggtitle(genes[1])
-    if(length(genes)==2){
-        p2 <- plotTSNE(sceObj, by_exprs_values = "reconstructed", colour_by = genes[2]) +
-                  ggtitle(genes[2])
-    }
+## B-cells markers
 
-    expPlot <- plotExpression(sceObj, 
-                   exprs_values = "reconstructed",
-                   x = "walktrap20", 
-                   colour_by = "walktrap20",
-                   features=genes) + 
-                 ggtitle(ctx)
-    if(length(genes)==1){
-        (pTSNE + p1) / expPlot
-    }else{
-        (pTSNE + p1 + p2) / expPlot
-    }
-}
-
-
+```{r}
+p1 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "MS4A1")
+p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "CD79A")
+p1 + p2
 ```
 
-## Naive CD4+ T
-
-```{r, fig.width=10, fig.height=5}
-plotMarkers("Naive CD4+ T cells")
+```{r}
+plotExpression(sce, 
+               exprs_values = "reconstructed",
+               x = "walktrap15", 
+               colour_by = "walktrap15",
+               features=c("MS4A1", "CD79A"))
 ```
 
-## Memory CD4+
 
-```{r, fig.width=10, fig.height=5}
-plotMarkers("Memory CD4+ T cells")
+## Monocyte markers
+
+```{r}
+p1 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "FCGR3A")
+p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "MS4A7")
+p1 + p2
 ```
 
-## B cells
-
-```{r, fig.width=10, fig.height=5}
-plotMarkers("B cells")
+```{r}
+plotExpression(sce, 
+               exprs_values = "reconstructed",
+               x = "walktrap15", 
+               colour_by = "walktrap15",
+               features=c("FCGR3A", "MS4A7"))
 ```
 
-## CD8+ T cells
+## Dendritic cell markers
 
-```{r, fig.width=10, fig.height=5}
-plotMarkers("CD8+ T cells")
+```{r}
+p1 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "FCER1A")
+p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "CST3")
+p1 + p2
 ```
 
-## NK cells
-
-```{r, fig.width=10, fig.height=5}
-plotMarkers("NK cells")
-```
-
-## CD14+ Monocytes
-
-```{r, fig.width=10, fig.height=5}
-plotMarkers("CD14+ Monocytes")
-```
-
-## FCGR3A+ Monocytes
-
-```{r, fig.width=10, fig.height=5}
-plotMarkers("FCGR3A+ Monocytes")
-```
-
-## Dendritic Cells
-
-```{r, fig.width=10, fig.height=5}
-plotMarkers("Dendritic Cells")
-```
-
-## Platelets
-
-```{r, fig.width=10, fig.height=5}
-plotMarkers("Platelets")
+```{r}
+plotExpression(sce, 
+               exprs_values = "reconstructed",
+               x = "walktrap15", 
+               colour_by = "walktrap15",
+               features=c("FCER1A", "CST3"))
 ```
 
 
@@ -737,11 +696,3 @@ saveRDS(sce, file="../Robjects/Caron_clustering_material.rds")
 sessionInfo()
 ```
 </details>
-
-```{r}
-# visualise a previously known marker gene (for monocytes)
-plotTSNE(sce, 
-         colour_by = "CST3", 
-         text_by = "walktrap20", 
-         by_exprs_values = "reconstructed")
-```
