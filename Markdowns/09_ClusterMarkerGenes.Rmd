@@ -115,7 +115,7 @@ logcounts obtained from the deconvolution method (using `computePooledFactors` &
 ## Pairwise comparisons for scoring potential marker genes
 
 The basic approach for marker gene identification across clusters is to perform
-statisticals tests for each gene between every pair of clusters based on gene
+statistical tests for each gene between every pair of clusters based on gene
 expression. We use `scoreMarkers()` function to do this. In addition to
 computing various scores, the function can take account of known batch effects.
 The function outputs a list of DataFrames, with one DataFrame of scores for each
@@ -142,7 +142,7 @@ statistics:
 
 The remaining columns contain summaries of three scores from the pairwise comparisons. The three scores are:
 
-* **logFC.cohen** - "Cohens *d*" - this is the log fold change of mean gene
+* **logFC.cohen** - "Cohen's *d*" - this is the log fold change of mean gene
 expression that has been standardized by scaling by the average of the standard
 deviation across the groups. This can be interpreted in a similar way to log
 fold change in that a positive value indicates upregulation in the cluster of
@@ -166,7 +166,7 @@ book](http://bioconductor.org/books/3.15/OSCA.advanced/marker-detection-redux.ht
 
 Whilst all the pairwise scores can be retrieved by adding the argument
 `full.stats=TRUE` to the `scoreMarkers` command, by default `scoreMarkers`
-returns 5 summary statistics for each scrore:
+returns 5 summary statistics for each score:
 
 * **mean.X** - this is the mean of the score across all pairwise comparisons. It
 gives the relative expression of the gene versus the average of the other
@@ -184,7 +184,7 @@ selection if there are small number of clusters with very similar effect sizes,
 as these will be effectively ignored.
 * **max.X** - this is the maximum score obtained across all pairwise
 comparisons. This is the least stringent summary statistic for detecting
-upregulated genes as a high score ony indicates that the gene is upregulated in
+upregulated genes as a high score only indicates that the gene is upregulated in
 the cluster of interest relative to *at least one* other clusters. Conversely,
 if the maximum is low, then the gene is downregulated relative to *all* other
 clusters.
@@ -207,7 +207,7 @@ generate a list of genes that is the union of genes with a rank of 5 or less for
 any pairwise comparison.This will ensure we get at least 5 genes that
 distinguish the cluster of interest from all other clusters.
 
-For exmple using the min-rank for Cohen's *d* on cluster 11 yeilds 19 marker
+For example using the min-rank for Cohen's *d* on cluster 11 yields 19 marker
 genes:
 
 ```{r}
@@ -230,7 +230,7 @@ plotGroupedHeatmap(uncorrected,
                    zlim=c(-3, 3))
 ```
 
-We can plot the distribution of  expression of sepicfic genes as we have
+We can plot the distribution of  expression of specific genes as we have
 previously, e.g. FCGR3A (CD16), a monocyte marker:
 
 ```{r}
@@ -243,7 +243,7 @@ plotTSNE(corrected,
 # Adjusting the log-fold change
 
 The AUC and Cohen's *d* scores incorporate both the gene expression differences
-between the clusters and the vairiance in gene expression scores within each
+between the clusters and the variance in gene expression scores within each
 cluster. If a gene with low variance it is possible that it will be ranked
 highly even if the magnitude of the difference between the clusters is low.
 These genes will not necessarily make good marker genes. It may therefore be

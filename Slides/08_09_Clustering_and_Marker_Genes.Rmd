@@ -24,7 +24,7 @@ knitr::include_graphics('Images/workflow2_clustering.png')
 
 ## Motivation
 
-The data has been QCed and normalized, and batch corrected.
+The data has been QC'd and normalized, and batch corrected.
   
 We can now ask biological questions.
 
@@ -103,7 +103,7 @@ Cons
 ## Modularity
 
 Several methods to detect clusters (‘communities’) in networks rely on the
-‘modulatrity’ metric.
+‘modularity’ metric.
 
 Modularity measures how separated clusters are from each other.
 
@@ -162,7 +162,7 @@ knitr::include_graphics("../Images/leiden_Fig1_noLegend.png", auto_pdf = TRUE)
 
 ## Separatedness - silhouette width
 
-Congruence of clusters may be assessed by computing the sillhouette width for 
+Congruence of clusters may be assessed by computing the silhouette width for 
 each cell.
 
 For each cell in the cluster calculate the the average distance to all other
@@ -220,7 +220,7 @@ Each is calculated pairwise between each possible combination of clusters
 
 ## Differences in the mean expression level
 
-"Cohens *d*":
+### "Cohen's *d*"
 
 * This is the log fold change of mean gene expression that has been standardized
 by scaling by the average of the standard deviation across the groups.
@@ -229,7 +229,7 @@ value indicates upregulation in the cluster of interest.
 
 ## Differences in the rank of expression
 
-"Area Under the Curve":
+### "Area Under the Curve"
 
 * This quantifies the ability to distinguish between two gene expression
 distributions.
@@ -241,7 +241,7 @@ downregulation, and 0.5 as no difference.
 
 ## Differences in the proportion of cells expressing the gene
 
-"log-fold-change detected" 
+### log-fold-change detected
 
 * This is the log fold change in the proportion of cells in which the gene is
 detected in the cluster of interest versus the proportion of cells in which the
@@ -267,7 +267,7 @@ cluster of interest relative to *all* other clusters.
 comparisons. It is more robust to outliers than the mean. 
 * **max.X** - this is the maximum score obtained across all pairwise
 comparisons. This is the least stringent summary statistic for detecting
-upregulated genes as a high score ony indicates that the gene is upregulated in
+upregulated genes as a high score only indicates that the gene is upregulated in
 the cluster of interest relative to *at least one* other clusters.
 * **rank.X** - This is the minimum ranking ("min-rank") of that gene by that
 score across all clusters. 

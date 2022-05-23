@@ -53,7 +53,7 @@ with regard to the comments on the "correctness" of any given clustering result.
 
 Once we have normalized the data and removed confounders we can carry out
 analyses that are relevant to the biological questions at hand. The exact nature
-of the analysis depends on the dataset. One of the most promising applications
+of the analysis depends on the data set. One of the most promising applications
 of scRNA-seq is *de novo* discovery and annotation of cell-types based on
 transcription profiles. This requires the identification of groups of cells
 based on the similarities of the transcriptomes without any prior knowledge of
@@ -64,7 +64,7 @@ required batch correction this would usually on the PCA output. As our data has
 required batch correction we will use the "corrected" reducedDims data.
 
 We will focus graph-based clustering, however, it is also possible to apply
-hierachical clustering and k-means clustering on smaller data sets - see the
+hierarchical clustering and k-means clustering on smaller data sets - see the
 [OSCA
 book](http://bioconductor.org/books/release/OSCA.basic/clustering.html#vector-quantization-with-k-means)
 for details. Graph-base clustering is a more recent development and better
@@ -72,8 +72,8 @@ suited for scRNA-seq, especially large data sets.
 
 # Load data
 
-We will use the data set generated in the preivous session. This contains 7
-samples from the Caron dataset. For the purposes of these materials, in the
+We will use the data set generated in the previous session. This contains 7
+samples from the Caron data set. For the purposes of these materials, in the
 interests of time, each sample has been downsampled to only contain 500 cells.
 
 ```{r load_data}
@@ -110,7 +110,7 @@ subpopulation" (see `scran`'s `buildSNNGraph()` manual).
 The edges between nodes (cells) can be weighted based on the similarity of the
 cells; edges connecting cells that are more closely related will have a higher
 weight. The three common methods for this weighting are (see the *bluster* 
-pacakge documentation for the `makeSNNGraph` function):
+package documentation for the `makeSNNGraph` function):
 
 * **rank** - the weight is based on the highest rank of the shared nearest
 neighbours  
@@ -132,7 +132,7 @@ for details of other available in *scran*.
     + no assumptions on the shape of the clusters or the distribution of cells
     within each cluster
     + no need to specify a number of clusters to identify (but the size of the
-    neigbourhood used affects the size of clusters)
+    neighbourhood used affects the size of clusters)
 * Cons:
     + loss of information beyond neighboring cells, which can affect community detection in regions with many cells.
 
@@ -171,7 +171,7 @@ The number of cells in the data set is large and plotting all the cells would
 take too long, so we randomly choose 1000 nodes (cells) in the network before
 plotting the resulting smaller network. Adding sample data to the graph and
 plotting the results are done using the [*igraph*
-pacakge](https://igraph.org/r/doc/subgraph.html). Cells can be color-coded by
+package](https://igraph.org/r/doc/subgraph.html). Cells can be color-coded by
 sample type:
 
 ```{r show_walktrap_graph, warning = FALSE, fig.height=6, out.width = '100%'}
@@ -185,7 +185,7 @@ V(snn.gr)$SampleGroup <- as.character(colData(sce)$SampleGroup)
 set.seed(1423)
 edgesToGet <- sample(nrow(snn.gr[]), 1000)
 
-# subset graph for these 1000 ramdomly chosen nodes
+# subset graph for these 1000 randomly chosen nodes
 snn.gr.subset <- subgraph(snn.gr, edgesToGet)
 
 # set colors for clusters
@@ -342,7 +342,7 @@ keep things simple we will not cover it in this course.
 
 # Assessing cluster behaviour
 
-A variety of metrics are avialable to aid us in assessing the behaviour of a 
+A variety of metrics are available to aid us in assessing the behaviour of a 
 particular clustering method on our data. These can help us in assessing how
 well defined different clusters within a single clustering are in terms of
 the relatedness of cells within the cluster and the how well separated that
@@ -363,7 +363,7 @@ in other clusters. This allows us to assess cluster separation.
 For each cell in the cluster we calculate the the average distance to all other
 cells in the cluster and the average distance to all cells not in the cluster.
 The cells silhouette width is the difference between these divided by the
-maximum of the two values. Cells with a large silhouette are stongly related to
+maximum of the two values. Cells with a large silhouette are strongly related to
 cells in the cluster, cells with a negative silhouette width are more closely
 related to other clusters.
 
@@ -457,7 +457,7 @@ detection. Modularity is a ratio between the observed weights of the edges
 within a cluster versus the expected weights if the edges were randomly
 distributed between all nodes. Rather than calculating a single modularity value
 for the whole graph, we can instead calculate a pair-wise modularity value
-between each pair of clusters using teh `pairwiseModularity` function from the
+between each pair of clusters using the `pairwiseModularity` function from the
 *bluster* package. For this we need to have the graph from the clustering, so we
 will rerun the walktrap clustering with k=15 to obtain this. We can plot the
 resulting ratios on a heatmap. We would expect the highest modularity values
@@ -609,7 +609,7 @@ of *k*, this can take a long time to run. Usually I do not run this
 interactively in R studio, but instead write an R script that will end by
 exporting the final output of `clusterSweep` to an RDS object which I can later
 load into R. This R script can then be sent as a job to the cluster. This is
-also means the job can be massively more parallelised by using more cores.
+also means the job can be massively more parallelized by using more cores.
 We will see this in the exercise for this session.
 
 # Finalise clustering selection
@@ -645,7 +645,7 @@ plot its expression on a t-SNE, and show distribution across each cluster on a
 violin plot.
 
 We will be using gene symbols to identify the marker genes, so we will switch
-the rownames in the SCE object to be gene symbols. We use the scate function
+the rownames in the SCE object to be gene symbols. We use the scater function
 `uniquifyFeatureNames` to do this as there are a few duplicated gene symbols.
 
 ```{r}
