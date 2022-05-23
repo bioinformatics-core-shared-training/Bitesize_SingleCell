@@ -4,14 +4,10 @@ subtitle: "Cluster marker genes"
 date: "May 2021"
 author: "Ashley Sawle, Stephane Ballereau, Zeynep Kalender Atak, Hugo Tavares"
 output:
-  html_document:
-    df_print: paged
+  html_notebook:
     toc: yes
-    toc_depth: 3
-    number_sections: true
+    toc_depth: 2
     css: ../css/boxes.css
-editor_options: 
-  chunk_output_type: inline
 ---
 
 
@@ -23,7 +19,7 @@ set.seed(123)
 ```
 
 
-# Introduction {#clusterMarkerGenesTop}
+# Introduction
 
 In order to aid the interpretation of the clustering results, it is helpful to
 identify genes that are contributing to the separation of cells into those
@@ -33,14 +29,15 @@ The main approach to achieve this, is to identify genes that are differently
 expressed between clusters. These may be, for example, exclusively expressed in
 a single cluster or perhaps differentiate between a few different clusters.
 There are different methods to identify differentially expressed genes, focusing
-on differences between the mean expression level, or the probability of
-expression between clusters or take the whole distribution of expression into
-account.
+on differences between the mean expression level, the differences in the ranking
+of genes by expression between clusters or the differences between clusters of
+the proportions of cells expressing a gene.
 
 Our main objective in this section is to cover some of the methods that can be
 used to achieve this goal, and obtain a summary table of results.
 
-As always, the [OSCA chapter on marker detection](https://bioconductor.org/books/release/OSCA/marker-detection.html) contains additional detail and advice.
+As always, the [OSCA chapter on marker detection](https://bioconductor.org/books/release/OSCA.basic/marker-detection.html) 
+contains additional detail and advice.
 
 # Setup
 
@@ -55,10 +52,10 @@ library(tidyverse)
 
 We will load two _SingleCellExperiment_ objects generated in previous sections:
 
-* The SCE with logcounts normalised within each batch generated in the [Batch
-Correction](07_BatchCorrection.html) section.  
+* The SCE with logcounts normalised within each batch generated in the [Dataset
+Integration and Batch Correction](07_DatasetIntegration.html) section
 * The SCE with batch-corrected data integration using the `batchelor::fastMNN()`
-algorithm, including clusters covered in the [Clustering](08_Clustering.html)
+algorithm, including clusters covered in the [Clustering](08_Clustering_Materials.nb.html)
 section.  
 
 ```{r}
@@ -71,8 +68,8 @@ rownames(corrected) <- uniquifyFeatureNames(rownames(corrected), rowData(correct
 ```
 
 Note that we also replace the gene names (rownames) of our objects to use common
-gene names instead of Ensembl IDs. Using the `uniquifyFeatureNames()` function
-makes this safely, avoiding duplicate gene names.
+gene symbols instead of Ensembl IDs. Using the `uniquifyFeatureNames()` function
+makes this safely, avoiding duplicated gene symbols.
 
 As a reminder, the `corrected` object contains the cell cluster assignments
 obtained, for example, with the "walktrap" algorithm with *k*=15:
@@ -88,28 +85,17 @@ It will also be helpful for data visualisation purposes to copy the cluster
 assignment in the corrected data to our uncorrected (normalised) SCE object:
 
 ```{r}
-# copy cluster assignments to the uncorrected object
 # first make sure that the cell names are in the same order
 all(colnames(uncorrected) == colnames(corrected))
 colData(uncorrected)$walktrap <- factor(colData(corrected)$walktrap15)
-```
-
-Our objective is to identify genes that distinguish between these clusters.
-For example genes such as the "CST3" gene, which is a known monocyte marker:
-
-```{r}
-plotTSNE(corrected, 
-         colour_by = "CST3", 
-         text_by = "walktrap15", 
-         by_exprs_values = "reconstructed")
 ```
 
 
 # Identifying cluster marker genes
 
 Although we have defined our clusters based on the batch-corrected expression
-values, these should not be used for for gene-based analyses like marker gene
-detection.
+values, these should **not** be used for for gene-based analyses like marker
+gene detection.
 
 Instead, we should use the uncorrected (normalised) expression values for
 differential expression between clusters.
@@ -122,7 +108,7 @@ shrinks the magnitude of the expression values so that the computed log-fold
 changes have no obvious interpretation. Of greater concern is the possibility
 that the correction introduces artificial agreement across batches.
 
-In our case, valid assays to use in differential analysis tests are the
+In our case, the valid assay to use in differential analysis tests is the
 logcounts obtained from the deconvolution method (using `computePooledFactors` &
 `logNormCounts`).
 
@@ -143,10 +129,6 @@ markers <- scoreMarkers(uncorrected,
                         groups = factor(uncorrected$walktrap), 
                         block =uncorrected$SampleName)
 
-# returns a list of length equal to the number of clusters
-markers
-
-# check the result of a particular cluster
 markers[["8"]]
 ```
 
@@ -156,7 +138,7 @@ statistics:
 * **self.average** - the mean log-expression in the cluster of interest  
 * **other.average** - the grand mean across all other clusters  
 * **self.detected** - the proportion of cells with detected expression in the cluster of interest  
-* **other.detected** - the mean detected proportion across all other clusters  
+* **other.detected** - the mean detected proportion across all other clusters.  
 
 The remaining columns contain summaries of three scores from the pairwise comparisons. The three scores are:
 
@@ -172,18 +154,18 @@ expression of the gene than any random cell in the other cluster. It ranges from
 0 to 1, where 1 can be interpreted as upregulation, 0 downregulation, and 0.5 as
 no difference.
 * **logFC.detected** - this is the log fold change in the proportion of cells in
-which the gene is detected in the cluster of interest versus the number of cells
-in which the gene is detected in the other cluster. Positive values indicate
-that the gene is detected in a more cells in the cluster of interest than the
-other cluster. Note this takes no account of the magnitude of the gene
+which the gene is detected in the cluster of interest versus the proportion of
+cells in which the gene is detected in the other cluster. Positive values
+indicate that the gene is detected in a more cells in the cluster of interest
+than the other cluster. Note this takes no account of the magnitude of the gene
 expression.
 
-More detail on the differences between these effect sizes can be found in the
-["Advanced" Marker detection chapter of the OSCA
+More detail on the differences between these effect size scores can be found in
+the ["Advanced" Marker detection chapter of the OSCA
 book](http://bioconductor.org/books/3.15/OSCA.advanced/marker-detection-redux.html#properties-of-each-effect-size).
 
 Whilst all the pairwise scores can be retrieved by adding the argument
-`full.stats=TRUE` to the `scoreMarkers` command, by default score markers
+`full.stats=TRUE` to the `scoreMarkers` command, by default `scoreMarkers`
 returns 5 summary statistics for each scrore:
 
 * **mean.X** - this is the mean of the score across all pairwise comparisons. It
@@ -194,23 +176,23 @@ comparisons. This is the most stringent summary statistic for detecting
 upregulated genes, if the score is high, then the gene is upregulated in the
 cluster of interest relative to *all* other clusters. Conversely, if the minimum
 is low, then the gene is downregulated relative to *at least one* other cluster.  
-* **median.X** - this is the median of the score across all pairwise comparisons.
-It is more robust to outliers than the mean. Whilst this is beneficial in
-avoiding the situation where the effect size vary large in only a small number
-of comparisons, it may conversely be detrimental to marker gene selection if
-there are small number of clusters with very similar effect sizes, as these will
-be effectively ignored.  
+* **median.X** - this is the median of the score across all pairwise
+comparisons. It is more robust to outliers than the mean. Whilst this is
+beneficial in avoiding the situation where the effect size is very large in only
+a small number of comparisons, it may conversely be detrimental to marker gene
+selection if there are small number of clusters with very similar effect sizes,
+as these will be effectively ignored.
 * **max.X** - this is the maximum score obtained across all pairwise
 comparisons. This is the least stringent summary statistic for detecting
-upregulated genes as a high score indicates the gene is upregulated in the
-cluster of interest relative to *at least one* other clusters. Conversely, if
-the maximum is low, then the gene is downregulated relative to *all* other
-clusters.  
-* **rank.X** - This is the minimum ranking of that gene by that score across all
-clusters. For each pairiwse comparison the genes are ranked according to the
-score, this summary provides the lowest rank for that gene across all
-comparisons. Essentiall, a gene with a low "min-rank" will be one of the best
-genes according to that score in at least one comparison.
+upregulated genes as a high score ony indicates that the gene is upregulated in
+the cluster of interest relative to *at least one* other clusters. Conversely,
+if the maximum is low, then the gene is downregulated relative to *all* other
+clusters.
+* **rank.X** - This is the minimum ranking ("min-rank") of that gene by that
+score across all clusters. For each pairwise comparison the genes are ranked
+according to the score, this summary provides the lowest rank for that gene
+across all comparisons. Essentially, a gene with a low "min-rank" will be one of
+the best genes according to that score in at least one comparison.
 
 The choice of the summary used for ranking will effect the stringency of the
 selection. See the [the OSCA books "Basic" chapter on Marker gene
@@ -221,11 +203,12 @@ and maximum are most helpful for diagnosing discrepancies between the mean and
 median, rather than being used directly for ranking.
 
 Selecting genes based on a given min-rank, say *5*, is useful as it will
-generate a list of genes that is the union of genes with a rank of 5 or less.
-This will ensure we get at least 5 genes that distinguish the cluster of
-interest from all other clusters.
+generate a list of genes that is the union of genes with a rank of 5 or less for
+any pairwise comparison.This will ensure we get at least 5 genes that
+distinguish the cluster of interest from all other clusters.
 
-For exmple using the min-rank for Cohen's *d* on cluster 11:
+For exmple using the min-rank for Cohen's *d* on cluster 11 yeilds 19 marker
+genes:
 
 ```{r}
 topRanked <- markers[["11"]] %>%
@@ -238,7 +221,7 @@ topRanked
 
 We can then plot these on a heatmap to visualize the gene expression differences:
 
-```{r}
+```{r fig.height=6, fig.width=6}
 plotGroupedHeatmap(uncorrected, 
                    features=rownames(topRanked), 
                    group="walktrap", 
