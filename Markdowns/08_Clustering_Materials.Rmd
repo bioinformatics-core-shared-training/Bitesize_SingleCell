@@ -4,19 +4,9 @@ author: "Ashley Sawle, Stephane Ballereau"
 date: "May 2022"
 subtitle: Clustering
 output:
-  html_document:
+  html_notebook:
     toc: yes
-    toc_depth: 5
-    toc_float: yes
-    number_sections: yes
-    df_print: paged
-    fig_caption: yes
-    self_contained: yes
-    fig_width: 6
-    fig_height: 4
-  pdf_document:
-    toc: yes
-    toc_depth: '5'
+    toc_depth: 2
 ---
 
 
@@ -24,9 +14,16 @@ output:
 # Set some variables:
 require(knitr)
 opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE, cache=FALSE)
-opts_chunk$set(fig.width=7, fig.height=7)
 set.seed(123) # for reproducibility
 library(DT)
+library(scater) # scRnaSeq QC
+library(scran) # scRnaSeq normalisation
+library(bluster) # scRnaSeq clustering
+library(cluster) # for silhouette
+library(igraph) # for graph-based clustering and plotting networks
+library(pheatmap) # for heatmap plotting
+library(patchwork) # to combine plots
+library(tidyverse) # data wrangling and plotting (ggplot2)
 ```
 
 ```{r setup, warning=FALSE, message=FALSE}
@@ -48,9 +45,9 @@ knitr::include_graphics("../Images/Andrews2017_Fig1.png", auto_pdf = TRUE)
 
 Some of the materials originate in the [Hemberg group course
 material](https://biocellgen-public.svi.edu.au/mig_2019_scrnaseq-workshop/clustering-and-cell-annotation.html)
-with some of the text copied with a few edits. Also see the OSCA book's [chapter
-on clustering](https://osca.bioconductor.org/clustering.html). In particular,
-please read the
+with some of the text copied with a few edits. Also see the OSCA book's ["Basic"](http://bioconductor.org/books/release/OSCA.basic/clustering.html) and
+["Advanced"](http://bioconductor.org/books/release/OSCA.basic/clustering.html) 
+chapters on clustering. In particular, please read the
 [overview](http://bioconductor.org/books/release/OSCA.basic/clustering.html#overview-1)
 with regard to the comments on the "correctness" of any given clustering result.
 
@@ -62,7 +59,9 @@ transcription profiles. This requires the identification of groups of cells
 based on the similarities of the transcriptomes without any prior knowledge of
 the labels, or unsupervised clustering. To avoid the challenges caused by the
 noise and high dimensionality of the scRNA-seq data, clustering is performed
-after feature selection and dimensionality reduction, usually on the PCA output.
+after feature selection and dimensionality reduction, for data that has not 
+required batch correction this would usually on the PCA output. As our data has
+required batch correction we will use the "corrected" reducedDims data.
 
 We will focus graph-based clustering, however, it is also possible to apply
 hierachical clustering and k-means clustering on smaller data sets - see the
@@ -95,7 +94,8 @@ colData(sce) %>%
 
 Graph-based clustering entails building a nearest-neighbour (NN) graph using
 cells as nodes and their similarity as edges, then identifying 'communities' of
-cells within the network. A graph-based clustering method has three key parameters:
+cells within the network. A graph-based clustering method has three key
+parameters:
 
 * How many neighbors are considered when constructing the graph  
 * What scheme is used to weight the edges   
@@ -127,9 +127,12 @@ book](http://bioconductor.org/books/release/OSCA.basic/clustering.html#overview-
 for details of other available in *scran*.
 
 * Pros:
-    + fast and memory efficient (avoids the need to construct a distance matrix for all pairs of cells)
-    + no assumptions on the shape of the clusters or the distribution of cells within each cluster
-    + no need to specify a number of clusters to identify (but the size of the neigbourhood used affects the size of clusters)
+    + fast and memory efficient (avoids the need to construct a distance matrix
+    for all pairs of cells)
+    + no assumptions on the shape of the clusters or the distribution of cells
+    within each cluster
+    + no need to specify a number of clusters to identify (but the size of the
+    neigbourhood used affects the size of clusters)
 * Cons:
     + loss of information beyond neighboring cells, which can affect community detection in regions with many cells.
 
@@ -139,24 +142,18 @@ numbers of neighbours: 5, 15 and 25 (from
 
 <img src="../Images/bioCellGenGraphDeng.png" style="margin:auto; display:block" />
 
-We will:
-
-* build the graph and define clusters
-* check membership across samples
-* show membership on a t-SNE plot
-* assess clustering quality
 
 # Implementation
 
 The implementation of clustering in R is carried out using functions from a
-number of different packages, in particular the *bluster* package. *scran*
-provides a handy "wrapper" function `clusterCells` that allows us use a variety
-of different algorithms with on simple command.
+number of different packages, in particular the *bluster* and *igraph* packages.
+*scran* provides a handy "wrapper" function `clusterCells` that allows us use a
+variety of different algorithms with one simple command.
 
 By default `clusterCells` just returns a vector containing the cluster number
 for each cell. We can also retrieve the intermediate statistics (varying
 according to the algorithm used) and the SNN graph by specifying the *bluster*
-agrument `full = TRUE`. If you are only interested in retrieving the clusters,
+argument `full = TRUE`. If you are only interested in retrieving the clusters,
 this isn't necessary but in this first instance we will retrieve the graph and
 visualise it.
 
@@ -170,7 +167,7 @@ This has defined 14 clusters with varying numbers of cells:
 table(clustering1$clusters)
 ```
 
-The number of cells in the data set is large an plotting all the cells would
+The number of cells in the data set is large and plotting all the cells would
 take too long, so we randomly choose 1000 nodes (cells) in the network before
 plotting the resulting smaller network. Adding sample data to the graph and
 plotting the results are done using the [*igraph*
@@ -182,7 +179,7 @@ sample type:
 snn.gr <- clustering1$objects$graph
 
 # Add Sample group to vertices (nodes, ie cells)
-V(snn.gr)$SampleGroup <- colData(sce)$SampleGroup
+V(snn.gr)$SampleGroup <- as.character(colData(sce)$SampleGroup)
 
 # pick 1000 nodes randomly
 set.seed(1423)
@@ -214,12 +211,12 @@ legend('bottomright',
        pt.cex=1, cex=.6, bty="n", ncol=1)
 ```
 
-More commonly we will visualise the clusters by superimposing them on a tSNE or UMAP plot. 
-We can store the clusters in the `sce` object `colData`.
+More commonly we will visualise the clusters by superimposing them on a tSNE or
+UMAP plot. We can store the clusters in the `sce` object `colData`.
 
 ```{r}
 sce$Clusters1 <- clustering1$clusters
-plotReducedDim(sce, colour_by="Clusters1", dimred="TSNE")
+plotReducedDim(sce, colour_by="Clusters1", text_by = "Clusters1", dimred="TSNE")
 ```
 
 ### Modularity
@@ -243,13 +240,14 @@ original article describing the algorithm is [Pons P, Latapy M (2006) Computing
 communities in large networks using random walks. J Graph Algorithms Appl
 10(2):191–218](http://arxiv.org/abs/physics/0512106)
 
-Walktrap is the default algorithm for `clusterCells`, *k* is set
-to 10 by default and the default edge weighting is "rank". To explicitly request walktrap and to set the *k* to a different number
-of nearest neighbours, we use a `SNNGraphParam` object from the *bluster* 
-package (which is the package *clusterCells* is using under the hood). 
+Walktrap is the default algorithm for `clusterCells`, *k* is set to 10 by
+default and the default edge weighting is "rank". To explicitly request walktrap
+and to set the *k* to a different number of nearest neighbours, we use a
+`SNNGraphParam` object from the *bluster* package (which is the package
+*clusterCells* is using under the hood).
 
-Let's set the k to 15 but keep the other parameters the same. This 
-time we will just return the clusters:
+Let's set the *k* to 15 but keep the other parameters the same. This time we
+will just return the clusters:
 
 ```{r}
 sce$walktrap15 <- clusterCells(sce, 
@@ -267,13 +265,13 @@ table(sce$walktrap15)
 We can visualise the assignment of cells from different samples to the clusters
 using a heatmap.
 
-```{r rep_clusters_samples}
+```{r rep_clusters_samples, fig.width=4, fig.height=5}
 table(sce$walktrap15, sce$SampleName) %>% 
   pheatmap(cluster_rows = FALSE, cluster_cols = FALSE)
 ```
 
-Most clusters comprise cells from several replicates of a same sample type, cluster 6
-appears to be predominantly cells from teh ETV6-RUNX samples.
+Most clusters comprise cells from several replicates of a same sample type,
+cluster 9 appears to be predominantly cells from the ETV6-RUNX samples.
 
 ## Additional clustering parameters (Advanced)
 
@@ -299,7 +297,8 @@ article](https://www.nature.com/articles/s41598-019-41695-z#Fig1).
 
 <img src="../Images/leiden_Fig1_HTML.png" style="margin:auto; display:block" />
 
-We now apply the Louvain approach, store its outcome in the SCE object and show cluster sizes.
+We now apply the Louvain approach, store its outcome in the SCE object and show
+cluster sizes.
 
 ```{r cluster_louvain}
 sce$louvain15 <- clusterCells(sce, 
@@ -307,16 +306,23 @@ sce$louvain15 <- clusterCells(sce,
                            BLUSPARAM = SNNGraphParam(k = 15, cluster.fun = "louvain"))
 ```
 
+
+```{r}
+table(sce$louvain15)
+```
+
 The t-SNE plot shows cells color-coded by cluster membership:
 
 ```{r show_louvain_tsne_1, fig.height=6, fig.width=8}
-plotTSNE(sce, colour_by="louvain15")
+plotTSNE(sce, colour_by="louvain15", text_by = "louvain15")
 ```
 
-If we split by sample type we can see differences in the clusters between the sample groups:
+If we split by sample type we can see differences in the clusters between the
+sample groups:
 
 ```{r show_louvain_tsne_2, fig.width=10, fig.height=6}
-plotTSNE(sce, colour_by="louvain15") + facet_wrap(~ sce$SampleGroup)
+plotTSNE(sce, colour_by="louvain15") + 
+  facet_wrap(~ sce$SampleGroup)
 ```
 
 #### Leiden method
@@ -337,10 +343,10 @@ keep things simple we will not cover it in this course.
 # Assessing cluster behaviour
 
 A variety of metrics are avialable to aid us in assessing the behaviour of a 
-particular clustering method on our data. These can help us is assessing how
+particular clustering method on our data. These can help us in assessing how
 well defined different clusters within a single clustering are in terms of
 the relatedness of cells within the cluster and the how well separated that
-cluster is from cells in other cluster, and to compare the results of 
+cluster is from cells in other clusters, and to compare the results of 
 different clustering methods or parameter values (e.g. different values
 for *k*).
 
@@ -369,6 +375,7 @@ belongs to, and which other cluster it is most closely related to.
 sil.approx <- approxSilhouette(reducedDim(sce, "corrected"), clusters=sce$louvain15)
 sil.approx
 ```
+
 We can view the results in as a beeswarm plot. We colour each cell according to
 either its current cluster or, if the cell has a negative silhouette width, the
 cluster that it is closest to.
@@ -382,11 +389,12 @@ ggplot(silPlot.dat, aes(x=cluster, y=width, colour=closestCluster)) +
   ggbeeswarm::geom_quasirandom(method="smiley")
 ```
 
-We could also look at the correspondence between different clusters by these
-numbers on a grid showing for each cluster number of cells in that cluster that
-are closer to another cluster, colouring each tile by the proportion of the total
-cells in the cluster that it contains. Ideally we would like to see a strong 
-diagonal band and only a few off-diagonal tile containing small number of cells.
+We could also look at the correspondence between different clusters by plotting
+these numbers on a grid showing for each cluster number of cells in that cluster
+that are closer to another cluster, colouring each tile by the proportion of the
+total cells in the cluster that it contains. Ideally we would like to see a
+strong diagonal band and only a few off-diagonal tiles containing small number
+of cells.
 
 ```{r}
 plotSilGrid <- function(dat){
@@ -420,7 +428,7 @@ From these two plots we can see that clusters 3 to 8 appear to have a good
 degree of separation, however, clusters 1 and 2 have a large number of cells
 that appear to be closer to cluster 3. It is possible clusters 1-3 contain a
 degree of heterogeneity that suggests further splitting of these clusters may be
-required - perhaps there should more than 8 clusters to adequately reflect the
+required - perhaps there should more than 7 clusters to adequately reflect the
 biology.
 
 Let's do the same plots with the walktrap clusters
@@ -440,7 +448,7 @@ plotSilGrid(silPlot.dat)
 This clustering appears to have generated a set of clusters with better
 separatedness than the Louvain method with a *k* of 15.
 
-####  Modularity to assess clusters quality
+##  Modularity to assess clusters quality
 
 As mentioned early, the modularity metric is used in evaluating the
 separatedness between clusters. Some of the clustering algorithms, e.g. Louvain,
@@ -455,7 +463,7 @@ will rerun the walktrap clustering with k=15 to obtain this. We can plot the
 resulting ratios on a heatmap. We would expect the highest modularity values
 to be on the diagonal.
 
-```{r}
+```{r, fig.height=5, fig.width=6}
 walktrap15 <- clusterCells(sce, 
                            use.dimred = "corrected", 
                            BLUSPARAM = SNNGraphParam(k = 15, cluster.fun = "walktrap"),
@@ -466,9 +474,10 @@ pheatmap(log2(ratio+1), cluster_rows=FALSE, cluster_cols=FALSE,
     color=colorRampPalette(c("white", "blue"))(100))
 ```
 
-Largely, this reflects what we saw from the silhouette widths, but also reveals some additional
-inter-connectedness between other clusters e.g. cluster 3 and cluster 9. We can also visualise this
-as network graph where nodes are clusters and the edge weights are the modularity.
+Largely, this reflects what we saw from the silhouette widths, but also reveals
+some additional inter-connectedness between other clusters e.g. cluster 10 and
+cluster 2. We can also visualise this as network graph where nodes are clusters
+and the edge weights are the modularity.
 
 
 ```{r}
@@ -482,7 +491,7 @@ plot(cluster.gr,
      layout=igraph::layout_with_lgl)
 ```
 
-## Comparing two sets of clusters
+# Comparing two sets of clusters
 
 The wide variety of clustering algorithms available and their differing outputs
 reflect the different ways that it is possible to view out data in
@@ -494,28 +503,28 @@ the underlying biology. We will use the Jaccard index as measure of concordance
 between clusters. A value of 1 represents perfect concordance between clusters
 (i.e. they contain exactly the same cells).
 
-```{r}
-jacc.mat <- linkClustersMatrix(sce$walktrap15, sce$louvain15)
-rownames(jacc.mat) <- paste("Walktrap", rownames(jacc.mat))
-colnames(jacc.mat) <- paste("Louvain", colnames(jacc.mat))
+```{r fig.width=6, fig.height=4}
+jacc.mat <- linkClustersMatrix(sce$louvain15, sce$walktrap15)
+rownames(jacc.mat) <- paste("Louvain", rownames(jacc.mat))
+colnames(jacc.mat) <- paste("Walktrap", colnames(jacc.mat))
 pheatmap(jacc.mat, color=viridis::viridis(100), cluster_cols=FALSE, cluster_rows=FALSE)
 ```
 
-We can see that Louvain clusters 4, 5, and 6 are equivalent to walktrap clusters
-12, 8 and 4. The remaining Louvain clusters are combinations of cells from
+We can see that Louvain clusters 2, and 5 are equivalent to walktrap clusters
+9 and 4. The remaining Louvain clusters are combinations of cells from
 various walktrap clusters. We may want to look at marker genes for these
 clusters to assess what these two different views are telling us about the
 biology.
 
 # Cluster sweep
 
-As we have seen, there are a number of different parameters we can change to alter
-the final clustering result - the edge weighting method, the *k* and the clustering
-algorithm. There is no one gold standard that will fit all data, so, in most cases,
-it is necessary to assess a number of different clusterings to obtain one that provides
-a view of the data that fits our biological interpretations. The `clusterSweep` function
-allows us to apply a range of different parameters in one go and obtain the clustering
-for each.
+As we have seen, there are a number of different parameters we can change to
+alter the final clustering result - primarily the edge weighting method, the *k*
+and the clustering algorithm. There is no one gold standard that will fit all
+data, so, in most cases, it is necessary to assess a number of different
+clusterings to obtain one that provides a view of the data that suits our
+biological interpretations. The `clusterSweep` function allows us to apply a
+range of different parameters in one go and obtain the clustering for each.
 
 For example, suppose we wish to assess the effect of different values of *k* on the
 walktrap clustering. We can parallelize this process to make it faster.
@@ -528,8 +537,9 @@ out <- clusterSweep(reducedDim(sce, "corrected"),
                     BPPARAM=BiocParallel::MulticoreParam(5))
 ```
 
-The resulting object is list containing a DataFrame with the clusters for each combination of the clustering parameters and
-a corresponding DataFrame showing the parameters used to generate each of these:
+The resulting object is list containing a DataFrame with the clusters for each
+combination of the clustering parameters and a corresponding DataFrame showing
+the parameters used to generate each of these:
 
 ```{r}
 out$clusters[,1:4]
@@ -568,7 +578,7 @@ with more clusters with only a slight decrease in the silhouette score.
 Earlier we looked at the Jaccard index as a means of comparing two different
 clusterings. We could apply the same method here:
 
-```{r}
+```{r fig.width=5, fig.height=5}
 jacc.mat <- linkClustersMatrix(out$clusters$k.5_cluster.fun.walktrap, 
                                out$clusters$k.15_cluster.fun.walktrap)
 rownames(jacc.mat) <- paste("Walktrap_10", rownames(jacc.mat))
@@ -600,22 +610,18 @@ interactively in R studio, but instead write an R script that will end by
 exporting the final output of `clusterSweep` to an RDS object which I can later
 load into R. This R script can then be sent as a job to the cluster. This is
 also means the job can be massively more parallelised by using more cores.
-We will see this in the exercise.
+We will see this in the exercise for this session.
 
-## Expression of known marker genes
+# Expression of known marker genes
 
-If we expect our clusters to represent know cell types for which there are 
+If we expect our clusters to represent known cell types for which there are 
 well established marker genes, we can now start to investigate the clusters
 by plotting in parallel the expression of these genes. This can also help us
 in assessing if our clustering has satisfactorily partitioned our cells.
 
 ```{r, fig.height=6, fig.width=8}
-sce$walktrap10 <- clusterCells(sce, 
-                           use.dimred = "corrected", 
-                           BLUSPARAM = SNNGraphParam(k = 10, cluster.fun = "walktrap"))
-pTSNE <- plotTSNE(sce, colour_by = "walktrap10") +
+plotTSNE(sce, colour_by = "walktrap15", text_by = "walktrap15") +
   ggtitle("Walktrap clusters")
-pTSNE
 ```
 
 Having identified clusters, we now display the level of expression of cell type
@@ -623,8 +629,8 @@ marker genes to quickly match clusters with cell types. For each marker we will
 plot its expression on a t-SNE, and show distribution across each cluster on a
 violin plot.
 
-We will be using gene symbols to identify the marker genes, so we will switch the
-rownames in the SCE object to be gene symbols. We use the scate function
+We will be using gene symbols to identify the marker genes, so we will switch
+the rownames in the SCE object to be gene symbols. We use the scate function
 `uniquifyFeatureNames` to do this as there are a few duplicated gene symbols.
 
 ```{r}
@@ -633,13 +639,17 @@ rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ID, rowData(sce)$Symbol)
 
 ## B-cells markers
 
-```{r}
-p1 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "MS4A1")
-p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "CD79A")
+```{r fig.height=6, fig.width=12}
+p1 <- plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "MS4A1",
+               text_by = "walktrap15")
+p2 <- plotTSNE(sce, by_exprs_values = "reconstructed"
+               , colour_by = "CD79A",
+               text_by = "walktrap15")
 p1 + p2
 ```
 
-```{r}
+```{r fig.height=6, fig.width=12}
 plotExpression(sce, 
                exprs_values = "reconstructed",
                x = "walktrap15", 
@@ -650,13 +660,17 @@ plotExpression(sce,
 
 ## Monocyte markers
 
-```{r}
-p1 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "FCGR3A")
-p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "MS4A7")
+```{r fig.height=6, fig.width=12}
+p1 <- plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "FCGR3A",
+               text_by = "walktrap15")
+p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", 
+               colour_by = "MS4A7",
+               text_by = "walktrap15")
 p1 + p2
 ```
 
-```{r}
+```{r fig.height=6, fig.width=12}
 plotExpression(sce, 
                exprs_values = "reconstructed",
                x = "walktrap15", 
@@ -666,13 +680,17 @@ plotExpression(sce,
 
 ## Dendritic cell markers
 
-```{r}
-p1 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "FCER1A")
-p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", colour_by = "CST3")
+```{r fig.height=6, fig.width=12}
+p1 <- plotTSNE(sce, by_exprs_values = "reconstructed", 
+               colour_by = "FCER1A",
+               text_by = "walktrap15")
+p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", 
+               colour_by = "CST3",
+               text_by = "walktrap15")
 p1 + p2
 ```
 
-```{r}
+```{r fig.height=6, fig.width=12}
 plotExpression(sce, 
                exprs_values = "reconstructed",
                x = "walktrap15", 
