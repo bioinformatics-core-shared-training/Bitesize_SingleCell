@@ -6,17 +6,7 @@ subtitle: Clustering Exercise
 output:
   html_document:
     toc: yes
-    toc_depth: 5
-    toc_float: yes
-    number_sections: yes
-    df_print: paged
-    fig_caption: yes
-    self_contained: yes
-    fig_width: 6
-    fig_height: 4
-  pdf_document:
-    toc: yes
-    toc_depth: '5'
+    toc_depth: 2
 ---
 
 
@@ -144,9 +134,17 @@ how well these compare to your clusters.
 
 Finally, choose one clustering to use for marker gene identification.
 
-# 3. Marker gene identification
+# 3. Marker gene selection
 
+Run marker gene selection on your final clustering as described in the materials.
+You may additionally want to refer the OSCA book for further information.
 
+Q. Can you identify the cell population or populations contained in the group of
+cell circled in the figure below?
+
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("../Images/TSNE_for_clustering.png")
+```
 
 
 

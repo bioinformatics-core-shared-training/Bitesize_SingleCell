@@ -612,6 +612,21 @@ load into R. This R script can then be sent as a job to the cluster. This is
 also means the job can be massively more parallelised by using more cores.
 We will see this in the exercise for this session.
 
+# Finalise clustering selection
+
+When you have come to a decision about which clustering to use it is convenient
+to add it to `colData` column called "label" using the `colLabels` function.
+This means downstream code does not need to be changed should you later decide
+to switch to a different clustering (and makes the code easily re-usable for 
+different analyses).
+
+For now we will use the walktrap k=15 clustering.
+
+```{r}
+colLabels(sce) <- sce$walktrap15
+```
+
+
 # Expression of known marker genes
 
 If we expect our clusters to represent known cell types for which there are 
@@ -620,7 +635,7 @@ by plotting in parallel the expression of these genes. This can also help us
 in assessing if our clustering has satisfactorily partitioned our cells.
 
 ```{r, fig.height=6, fig.width=8}
-plotTSNE(sce, colour_by = "walktrap15", text_by = "walktrap15") +
+plotTSNE(sce, colour_by = "label", text_by = "label") +
   ggtitle("Walktrap clusters")
 ```
 
@@ -642,18 +657,18 @@ rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ID, rowData(sce)$Symbol)
 ```{r fig.height=6, fig.width=12}
 p1 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "MS4A1",
-               text_by = "walktrap15")
+               text_by = "label")
 p2 <- plotTSNE(sce, by_exprs_values = "reconstructed"
                , colour_by = "CD79A",
-               text_by = "walktrap15")
+               text_by = "label")
 p1 + p2
 ```
 
 ```{r fig.height=6, fig.width=12}
 plotExpression(sce, 
                exprs_values = "reconstructed",
-               x = "walktrap15", 
-               colour_by = "walktrap15",
+               x = "label", 
+               colour_by = "label",
                features=c("MS4A1", "CD79A"))
 ```
 
@@ -663,18 +678,18 @@ plotExpression(sce,
 ```{r fig.height=6, fig.width=12}
 p1 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "FCGR3A",
-               text_by = "walktrap15")
+               text_by = "label")
 p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", 
                colour_by = "MS4A7",
-               text_by = "walktrap15")
+               text_by = "label")
 p1 + p2
 ```
 
 ```{r fig.height=6, fig.width=12}
 plotExpression(sce, 
                exprs_values = "reconstructed",
-               x = "walktrap15", 
-               colour_by = "walktrap15",
+               x = "label", 
+               colour_by = "label",
                features=c("FCGR3A", "MS4A7"))
 ```
 
@@ -683,18 +698,18 @@ plotExpression(sce,
 ```{r fig.height=6, fig.width=12}
 p1 <- plotTSNE(sce, by_exprs_values = "reconstructed", 
                colour_by = "FCER1A",
-               text_by = "walktrap15")
+               text_by = "label")
 p2 <- plotTSNE(sce, by_exprs_values = "reconstructed", 
                colour_by = "CST3",
-               text_by = "walktrap15")
+               text_by = "label")
 p1 + p2
 ```
 
 ```{r fig.height=6, fig.width=12}
 plotExpression(sce, 
                exprs_values = "reconstructed",
-               x = "walktrap15", 
-               colour_by = "walktrap15",
+               x = "label", 
+               colour_by = "label",
                features=c("FCER1A", "CST3"))
 ```
 

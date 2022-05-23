@@ -72,13 +72,13 @@ gene symbols instead of Ensembl IDs. Using the `uniquifyFeatureNames()` function
 makes this safely, avoiding duplicated gene symbols.
 
 As a reminder, the `corrected` object contains the cell cluster assignments
-obtained, for example, with the "walktrap" algorithm with *k*=15:
+obtained in a `colData` column called "label":
 
 ```{r}
 # visualise cluster assignments on the corrected data
 plotTSNE(corrected, 
-         colour_by = "walktrap15", 
-         text_by = "walktrap15")
+         colour_by = "label", 
+         text_by = "label")
 ```
 
 It will also be helpful for data visualisation purposes to copy the cluster
@@ -87,7 +87,7 @@ assignment in the corrected data to our uncorrected (normalised) SCE object:
 ```{r}
 # first make sure that the cell names are in the same order
 all(colnames(uncorrected) == colnames(corrected))
-colData(uncorrected)$walktrap <- factor(colData(corrected)$walktrap15)
+colLabels(uncorrected) <- colLabels(corrected)
 ```
 
 
@@ -126,10 +126,10 @@ comparison will by necessity be omitted.
 
 ```{r}
 markers <- scoreMarkers(uncorrected, 
-                        groups = factor(uncorrected$walktrap), 
+                        groups = factor(uncorrected$label), 
                         block =uncorrected$SampleName)
 
-markers[["8"]]
+head(markers[["8"]], n=2)
 ```
 
 This DataFrame contains the results for cluster 8. The first four columns contain summary 
@@ -224,19 +224,20 @@ We can then plot these on a heatmap to visualize the gene expression differences
 ```{r fig.height=6, fig.width=6}
 plotGroupedHeatmap(uncorrected, 
                    features=rownames(topRanked), 
-                   group="walktrap", 
+                   group="label", 
                    block="SampleName",
                    center=TRUE, 
                    zlim=c(-3, 3))
 ```
 
-We can plot the distribution of  expression of sepcific genes as we have previously, e.g. FCGR3A (CD16), a monocyte marker:
+We can plot the distribution of  expression of sepicfic genes as we have
+previously, e.g. FCGR3A (CD16), a monocyte marker:
 
 ```{r}
 plotTSNE(corrected, 
          by_exprs_values = "reconstructed", 
          colour_by = "FCGR3A",
-         text_by = "walktrap15")
+         text_by = "label")
 ```
 
 # Adjusting the log-fold change
@@ -269,13 +270,13 @@ fold-change difference between it and other clusters is not great.
 ```{r}
 plotExpression(uncorrected, 
                features = "RPS18", 
-               x = "walktrap")
+               x = "label")
 ```
 We can select for strong positive markers by setting an `lfc` threshold of 2:
 
 ```{r}
 markerslfc <- scoreMarkers(uncorrected, 
-                        groups = factor(uncorrected$walktrap), 
+                        groups = factor(uncorrected$label), 
                         block =uncorrected$SampleName,
                         lfc=2)
 ```
@@ -300,8 +301,16 @@ markerslfc[["6"]]["RPS18", "rank.logFC.cohen"]
 
 :::note
 
-From the OSCA book:
-"Given that scoreMarkers() already reports effect sizes, it is tempting to take the next step and obtain p-values for the pairwise comparisons. Unfortunately, the p-values from the relevant tests cannot be reliably used to reject the null hypothesis. This is because DE analysis is performed on the same data used to obtain the clusters, which represents “data dredging” (also known as fishing or data snooping). The hypothesis of interest - are there differences between clusters? - is formulated from the data, so we are more likely to get a positive result when we re-use the data set to test that hypothesis."
+From the OSCA book:  
+
+> Given that scoreMarkers() already reports effect sizes, it is tempting to take
+the next step and obtain p-values for the pairwise comparisons. Unfortunately,
+the p-values from the relevant tests cannot be reliably used to reject the null
+hypothesis. This is because DE analysis is performed on the same data used to
+obtain the clusters, which represents “data dredging” (also known as fishing or
+data snooping). The hypothesis of interest - are there differences between
+clusters? - is formulated from the data, so we are more likely to get a positive
+result when we re-use the data set to test that hypothesis.
 
 More details [here](http://bioconductor.org/books/3.15/OSCA.advanced/marker-detection-redux.html#from-data-snooping)
 
