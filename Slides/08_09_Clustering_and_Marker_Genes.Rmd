@@ -53,7 +53,8 @@ In a NN graph two nodes (cells), say X and Y, are connected by an edge if:
 * the distance between them is amongst the **k** smallest distances from X to
 other cells, ‘**K**NN’
 or
-* they have **k** nearest neighbours in common **shared**-NN (‘**S**NN).
+* the above plus the distance between them is amongst the **k** smallest
+distances from X to other cells **shared**-NN (‘**S**NN).
   
 Once edges have been defined, they can be weighted by various metrics.
 
