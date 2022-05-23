@@ -2,7 +2,7 @@
 title: "Introduction to single-cell RNA-seq analysis"
 author: "Ashley Sawle"
 date: "May 2022"
-subtitle: Clustering Exercise
+subtitle: "Clustering and Marker Genes Exercise"
 output:
   html_document:
     toc: yes
@@ -41,7 +41,7 @@ chapters on clustering will be extremely useful.
 
 First, remember to `rsync` the **Course_Materials** directory using:
 
-```{bash}
+```{bash eval=FALSE}
 rsync -vrptg /scratcha/bioinformatics/Course_Materials .
 ```
 
@@ -78,7 +78,7 @@ You should then add code to run `clusterSweep` on line 25. I suggest using
 Walktrap, Louvain, and one other algorithm. You can find the other available
 algorithms in the OSCA book basic chapter under the section "Implementation".
 You should also test a range of different values of *k*. `clusterSweep` will run
-all possible combinations.
+all possible combinations. 
 
 Once `clusterSweep` has run, the script will write an RDS object called
 *Robjects/clusterSweep.out.rds* containing the output of `clusterSweep`. It will
@@ -90,10 +90,10 @@ The script already contains the code for adding the numbers of clusters and the
 mean silhouette width - as demonstrated in the live session. You should also add
 some code to generate the sum of the Within-cluster Mean Sum of Squares - you
 can find out about this metric in the OSCA book's "Advanced" clusting chapter
-[here](http://bioconductor.org/books/3.15/OSCA.advanced/clustering-redux.html#within-cluster-sum-of-squares)
+[here](http://bioconductor.org/books/release/OSCA.advanced/clustering-redux.html#within-cluster-sum-of-squares)
 and how to apply it to `clusterSweep` results under the [Clustering parameter
 sweeps
-section](http://bioconductor.org/books/3.15/OSCA.advanced/clustering-redux.html#clustering-parameter-sweeps).
+section](http://bioconductor.org/books/release/OSCA.advanced/clustering-redux.html#clustering-parameter-sweeps).
 
 Finally, the script will write out these metrics to a tab separated table called 
 *Robjects/clusterSweep.metrics_df.tsv*.
@@ -140,10 +140,11 @@ Run marker gene selection on your final clustering as described in the materials
 You may additionally want to refer the OSCA book for further information.
 
 Q. Can you identify the cell population or populations contained in the group of
-cell circled in the figure below?
+cells circled in the figure below based on the marker genes for the relevant
+cluster or clusters?
 
 ```{r, echo=FALSE, out.width='100%', fig.align='center'}
-knitr::include_graphics("../Images/TSNE_for_clustering.png")
+knitr::include_graphics("Images/TSNE_for_clusters.png")
 ```
 
 
