@@ -161,6 +161,36 @@ knitr::include_graphics("../Images/leiden_Fig1_noLegend.png", auto_pdf = TRUE)
 
 ([Traag et al, From Louvain to Leiden: guaranteeing well-connected communities](https://www.nature.com/articles/s41598-019-41695-z))
 
+## Leiden
+
+Issue with the Louvain method: some communities may be disconnected:
+
+```{r, echo=FALSE, out.height='60%', out.width = '60%', fig.align="center"}
+knitr::include_graphics("../Images/leiden_Fig2_HTML.png", auto_pdf = TRUE)
+```
+
+([Traag et al, From Louvain to Leiden: guaranteeing well-connected communities](https://www.nature.com/articles/s41598-019-41695-z))
+
+## Leiden {.columns-2 .smaller}
+
+The Leiden method improves on the Louvain method
+
+by garanteeing that at each iteration clusters are connected and well-separated.
+
+The method includes an extra step in the iterations:
+
+* after nodes are moved (step 1),
+* the resulting partition is refined (step2)
+* and only then the new aggregate network made, and refined (step 3).
+
+<p class="forceBreak"></p>
+
+```{r, echo=FALSE, out.height='100%', out.width = '100%', fig.align="center"}
+knitr::include_graphics("../Images/leiden_Fig3_noLegend.png", auto_pdf = TRUE)
+```
+
+([Traag et al, From Louvain to Leiden: guaranteeing well-connected communities](https://www.nature.com/articles/s41598-019-41695-z))
+
 ## Separatedness - silhouette width
 
 Congruence of clusters may be assessed by computing the silhouette width for 

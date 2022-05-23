@@ -122,7 +122,7 @@ of the two cells sets of nearest neighbours.
 Clusters are then identified using an algorithms that interprets the connections
 of the graph to find groups of highly interconnected cells. A variety of
 different algorithms are available to do this, in these materials we will focus
-on two methods: walktrap and louvain. See the [OSCA
+on three methods: walktrap, louvain and leiden. See the [OSCA
 book](http://bioconductor.org/books/release/OSCA.basic/clustering.html#overview-1)
 for details of other available in *scran*.
 
@@ -255,6 +255,7 @@ sce$walktrap15 <- clusterCells(sce,
                            BLUSPARAM = SNNGraphParam(k = 15, cluster.fun = "walktrap"))
 ```
 
+
 This time we have defined 12 clustering. As a general rule, increasing *k* will
 tend to decrease the number of clusters (not always, but generally).
 
@@ -336,9 +337,24 @@ article](https://www.nature.com/articles/s41598-019-41695-z#Fig3).
 
 <img src="../Images/leiden_Fig3_HTML.png" style="margin:auto; display:block" />
 
-This method is not currently implemented in *scran*/*igraph* but is used in
-Seurat with some jumping through hoops to make use of some Python packages. To
-keep things simple we will not cover it in this course.
+
+```{r}
+sce$leiden20 <- clusterCells(sce, 
+                           use.dimred = "corrected", 
+                           BLUSPARAM = SNNGraphParam(k = 20, cluster.fun = "leiden"))
+```
+
+
+```{r}
+table(sce$leiden20)
+```
+
+The t-SNE plot shows cells color-coded by cluster membership:
+
+```{r show_leiden_tsne_1, fig.height=6, fig.width=8}
+plotTSNE(sce, colour_by="leiden20", text_by = "louvain15")
+```
+
 
 # Assessing cluster behaviour
 
@@ -447,6 +463,21 @@ plotSilGrid(silPlot.dat)
 
 This clustering appears to have generated a set of clusters with better
 separatedness than the Louvain method with a *k* of 15.
+
+And again with the leiden clusters
+
+```{r}
+sil.approx <- approxSilhouette(reducedDim(sce, "corrected"), clusters=sce$leiden20)
+silPlot.dat <- sil.approx %>% 
+  as.data.frame() %>% 
+  mutate(closestCluster = ifelse(width > 0, cluster, other) %>% factor())
+
+ggplot(silPlot.dat, aes(x=cluster, y=width, colour=closestCluster)) +
+  ggbeeswarm::geom_quasirandom(method="smiley")
+
+plotSilGrid(silPlot.dat)
+```
+This seems similar to the walktrap clustering.
 
 ##  Modularity to assess clusters quality
 
