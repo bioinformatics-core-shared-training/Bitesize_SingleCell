@@ -124,7 +124,11 @@ Tuesday Session
 
 ### Week 6
 
-* Clustering and Cluster Marker genes - Ashley Sawle
+* Clustering and Cluster Marker genes - Ashley Sawle  
+  + [Slides](Slides/08_09_Clustering_and_Marker_Genes.html)  
+  + [Clustering Materials](Markdowns/08_Clustering_Materials.nb.html)  
+  + [Cluster Marker Gene Selection Materials](Markdowns/09_ClusterMarkerGenes.nb.html)  
+  + [Clustering and Marker Gene Selection Exercise](Markdowns/08_09_Clustering_and_Marker_Genes_Exercise.html)  
 
 ### Week 7
 
