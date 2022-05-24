@@ -9,24 +9,11 @@ output:
     toc_depth: 2
 ---
 
-
 ```{r knitr_options, echo=FALSE, results="hide", message=FALSE}
-# Set some variables:
-require(knitr)
-opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE, cache=FALSE)
-set.seed(123) # for reproducibility
-library(DT)
-library(scater) # scRnaSeq QC
-library(scran) # scRnaSeq normalisation
-library(bluster) # scRnaSeq clustering
-library(cluster) # for silhouette
-library(igraph) # for graph-based clustering and plotting networks
-library(pheatmap) # for heatmap plotting
-library(patchwork) # to combine plots
-library(tidyverse) # data wrangling and plotting (ggplot2)
+knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE, cache=FALSE)
 ```
 
-```{r setup, warning=FALSE, message=FALSE}
+```{r setup, message=FALSE}
 library(scater) # scRnaSeq QC
 library(scran) # scRnaSeq normalisation
 library(bluster) # scRnaSeq clustering
@@ -35,13 +22,10 @@ library(igraph) # for graph-based clustering and plotting networks
 library(pheatmap) # for heatmap plotting
 library(patchwork) # to combine plots
 library(tidyverse) # data wrangling and plotting (ggplot2)
+library(DT) # For nice printing of tables in the html
 ```
 
 # Overview
-
-```{r, echo=FALSE, out.width='100%', fig.align='center'}
-knitr::include_graphics("../Images/Andrews2017_Fig1.png", auto_pdf = TRUE)
-```
 
 Some of the materials originate in the [Hemberg group course
 material](https://biocellgen-public.svi.edu.au/mig_2019_scrnaseq-workshop/clustering-and-cell-annotation.html)
@@ -183,10 +167,10 @@ V(snn.gr)$SampleGroup <- as.character(colData(sce)$SampleGroup)
 
 # pick 1000 nodes randomly
 set.seed(1423)
-edgesToGet <- sample(nrow(snn.gr[]), 1000)
+selectedNodes <- sample(3500, 1000)
 
 # subset graph for these 1000 randomly chosen nodes
-snn.gr.subset <- subgraph(snn.gr, edgesToGet)
+snn.gr.subset <- subgraph(snn.gr, selectedNodes)
 
 # set colors for clusters
 grps <-  V(snn.gr.subset)$SampleGroup
@@ -216,7 +200,7 @@ UMAP plot. We can store the clusters in the `sce` object `colData`.
 
 ```{r}
 sce$Clusters1 <- clustering1$clusters
-plotReducedDim(sce, colour_by="Clusters1", text_by = "Clusters1", dimred="TSNE")
+plotTSNE(sce, colour_by="Clusters1", text_by = "Clusters1")
 ```
 
 ### Modularity
@@ -241,10 +225,10 @@ communities in large networks using random walks. J Graph Algorithms Appl
 10(2):191–218](http://arxiv.org/abs/physics/0512106)
 
 Walktrap is the default algorithm for `clusterCells`, *k* is set to 10 by
-default and the default edge weighting is "rank". To explicitly request walktrap
-and to set the *k* to a different number of nearest neighbours, we use a
-`SNNGraphParam` object from the *bluster* package (which is the package
-*clusterCells* is using under the hood).
+default and the default edge weighting is "rank". To explicitly request a
+specific algorithm and to set the *k* to a different number of nearest
+neighbours, we use a `SNNGraphParam` object from the *bluster* package (which is
+the package *clusterCells* is using under the hood).
 
 Let's set the *k* to 15 but keep the other parameters the same. This time we
 will just return the clusters:
@@ -274,6 +258,17 @@ table(sce$walktrap15, sce$SampleName) %>%
 Most clusters comprise cells from several replicates of a same sample type,
 cluster 9 appears to be predominantly cells from the ETV6-RUNX samples.
 
+We can visualise this on the TSNE:
+
+```{r}
+plotTSNE(sce, colour_by="walktrap15", text_by = "walktrap15")
+```
+
+
+```{r, fig.width=10, fig.height=6}
+plotTSNE(sce, colour_by="walktrap15") +
+  facet_wrap(sce$SampleGroup)
+```
 ## Additional clustering parameters (Advanced)
 
 The different clustering algorithms may have additional parameters, specific to
@@ -587,11 +582,10 @@ Here we will just look at the mean silhouette width and the number of clusters.
 ```{r}
 df <- as.data.frame(out$parameters)
 df$num.clusters <- apply(out$clusters, 2, max)
-all.sil <- lapply(as.list(out$clusters), function(cluster) {
+df$silhouette <- map_dbl(as.list(out$clusters), function(cluster) {
     sil <- approxSilhouette(reducedDim(sce, "corrected"), cluster)
     mean(sil$width)
 })
-df$silhouette <- unlist(all.sil)
 
 nclPlot <- ggplot(df, aes(x = k, y = num.clusters)) + 
                   geom_line(lwd=2)
