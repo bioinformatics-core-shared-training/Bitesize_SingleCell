@@ -1,0 +1,87 @@
+---
+title: "Introduction to single-cell RNA-seq analysis"
+author: "Ashley Sawle"
+date: "May 2022"
+subtitle: Clustering and Marker Genes Exercise - Solutions
+output:
+  html_document:
+    toc: yes
+    toc_depth: 5
+    toc_float: yes
+    number_sections: yes
+    df_print: paged
+    fig_caption: yes
+    self_contained: yes
+    fig_width: 6
+    fig_height: 4
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+---
+
+```{r setup, warning=FALSE, message=FALSE, include=FALSE}
+library(scater) # scRnaSeq QC
+library(scran) # scRnaSeq normalisation
+library(bluster) # scRnaSeq clustering
+library(cluster) # for silhouette
+library(igraph) # for graph-based clustering and plotting networks
+library(pheatmap) # for heatmap plotting
+library(patchwork) # to combine plots
+library(tidyverse) # data wrangling and plotting (ggplot2)
+library(DT) # for printing nice data tables from data.frames
+
+knitr::opts_chunk$set(cache=FALSE) # This prevents RStudio from caching the results when you render the report
+```
+
+# Load data
+
+Cluster sweep has already been run on the QC'd, filtered, normalised and batch
+corrected Caron data. Please see the script *ClusterSweep.R* for details.
+
+Here the `clusterSweep` results object, cluster behaviour metrics and the SCE
+object containing corrected data and the clusters are loaded.
+
+```{r load_data}
+out <- read_tsv("../Robjects/clusterSweep.out.rds")
+df <- read_tsv("../Robjects/clusterSweep.metrics_df.tsv")
+sce <- readRDS("../Robjects/clusterSweep.sce.rds")
+```
+
+Cluster sweep was run with the following combinations of parameters:
+
+```{r tableOfparameters}
+out$parameters %>%
+  as.data.frame() %>% 
+  select(`Cluster function`=cluster.fun, k) %>% 
+  rownames_to_column("colData column") %>% 
+  datatable(rownames=FALSE, options=list(dom="t", pageLength=18))
+```
+
+# Assess cluster behaviour metrics
+
+We will consider the number of clusters, the mean silhouette width and the sum
+of the within-cluster sum of squares as an initial assessment of cluster
+behaviour. To assess the behaviour of the clusterings we can plot these metrics
+against the *k*.
+
+```{r plotMetrics, fig.width=12}
+nclPlot <- ggplot(df, aes(x = k, y = num.clusters)) + 
+                  geom_line(aes(colour=cluster.fun), lwd=2)
+silPlot <- <<YOUR_CODE_HERE>>
+wcssPlot <- <<YOUR_CODE_HERE>>
+  
+nclPlot + silPlot + wcssPlot + plot_layout(guides = "collect")
+```
+
+
+
+# Visualise the clusters using tSNE plots
+
+We can now visualise our selected clusterings of interest on tSNE plots.
+
+```{r}
+
+```
+
+
+
