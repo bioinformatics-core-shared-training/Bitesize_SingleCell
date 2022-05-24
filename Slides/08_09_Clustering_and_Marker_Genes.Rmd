@@ -51,8 +51,10 @@ Nearest-Neighbour (NN) graph:
 In a NN graph two nodes (cells), say X and Y, are connected by an edge if:
 
 * the distance between them is amongst the **k** smallest distances from X to
-other cells, ‘**K**NN’
-or
+other cells, ‘**K**NN’  
+
+or  
+
 * the above plus the distance between them is amongst the **k** smallest
 distances from X to other cells **shared**-NN (‘**S**NN).
   
@@ -314,12 +316,12 @@ is statistically flawed, since the clusters were themselves defined based on the
 gene expression data itself. Validation is crucial as a follow-up from these
 analyses.
 
-* Do not use batch-integrated expression data for differential analysis,
-instead, **include batch in the statistical model** (the `scoreMarkers()`
-function has the `block` argument to achieve this)
+* Do not use batch-integrated expression data for calculating marker gene
+scores, instead, **include batch in the statistical model** (the
+`scoreMarkers()` function has the `block` argument to achieve this)
 
-* Normalization strategy has a big influence on the results in differential
-expression.
+* Normalization strategy has a big influence on the results in differences in
+expression between cell and between clusters.
 
 * A lot of what you get might be noise. Take two random set of cells and run DE
 and you probably with have a few significant genes with most of the commonly
