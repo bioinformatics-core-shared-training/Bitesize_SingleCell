@@ -89,7 +89,7 @@ Finally, we will generate a data.frame containing the cluster behaviour metrics.
 The script already contains the code for adding the numbers of clusters and the
 mean silhouette width - as demonstrated in the live session. You should also add
 some code to generate the sum of the Within-cluster Mean Sum of Squares - you
-can find out about this metric in the OSCA book's "Advanced" clusting chapter
+can find out about this metric in the OSCA book's "Advanced" clustering chapter
 [here](http://bioconductor.org/books/release/OSCA.advanced/clustering-redux.html#within-cluster-sum-of-squares)
 and how to apply it to `clusterSweep` results under the [Clustering parameter
 sweeps

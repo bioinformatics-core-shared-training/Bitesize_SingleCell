@@ -347,7 +347,7 @@ table(sce$leiden20)
 The t-SNE plot shows cells color-coded by cluster membership:
 
 ```{r show_leiden_tsne_1, fig.height=6, fig.width=8}
-plotTSNE(sce, colour_by="leiden20", text_by = "louvain15")
+plotTSNE(sce, colour_by="leiden20", text_by = "leiden20")
 ```
 
 
@@ -606,7 +606,7 @@ clusterings. We could apply the same method here:
 ```{r fig.width=5, fig.height=5}
 jacc.mat <- linkClustersMatrix(out$clusters$k.5_cluster.fun.walktrap, 
                                out$clusters$k.15_cluster.fun.walktrap)
-rownames(jacc.mat) <- paste("Walktrap_10", rownames(jacc.mat))
+rownames(jacc.mat) <- paste("Walktrap_5", rownames(jacc.mat))
 colnames(jacc.mat) <- paste("Walktrap_15", colnames(jacc.mat))
 pheatmap(jacc.mat, color=viridis::viridis(100), cluster_cols=FALSE, cluster_rows=FALSE)
 ```
