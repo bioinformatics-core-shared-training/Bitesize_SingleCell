@@ -318,6 +318,9 @@ analyses.
 instead, **include batch in the statistical model** (the `scoreMarkers()`
 function has the `block` argument to achieve this)
 
+* Normalization strategy has a big influence on the results in differential
+expression.
+
 * A lot of what you get might be noise. Take two random set of cells and run DE
 and you probably with have a few significant genes with most of the commonly
 used tests.
