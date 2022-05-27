@@ -262,9 +262,7 @@ I asked you to identify this cluster:
 Which is made up of clusters 3 and 7.
 
 ```{r}
-plotTSNE(sce, 
-         colour_by = "k.57_cluster.fun.leiden", 
-         text_by = "k.57_cluster.fun.leiden")
+plotTSNE(sce, colour_by = "label", text_by = "label")
 ```
 
 Let's have a look at the top marker genes for cluster 3:
