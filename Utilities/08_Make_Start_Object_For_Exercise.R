@@ -6,12 +6,9 @@ library(tidyverse)
 library(BiocSingular)
 
 sce <- readRDS("../Robjects/Caron_filtered_genes.rds")
-sce
+sce2 <- readRDS("../Robjects/DataIntegration_all_sce_dimred.Rds")
 
-colData(sce) %>%
-  as.data.frame() %>% 
-  count(Sample)
-
+# Subset the data
 # get the same 7 samples as in the materials
 samples <- colData(sce)$Sample %in% colData(sce2)$SampleName
 
@@ -21,11 +18,17 @@ genes <- rownames(sce2)
 # subset
 sce <- sce[genes, samples]
 
-colData(sce) %>%
-  as.data.frame() %>% 
-  count(Sample)
+# normalise
+clust <- quickCluster(sce)
+sce <- computePooledFactors(sce, cluster=clust, min.mean=0.1)
+sce <- logNormCounts(sce)
 
+# rename the sample names
 colnames(colData(sce))[1] <- "SampleName"
+
+saveRDS(sce, "../Robjects/LogNormalised.AllCells.Rds")
+
+# Run batch integration
 
 quick.corrected <- quickCorrect(sce, batch = sce$SampleName)
 

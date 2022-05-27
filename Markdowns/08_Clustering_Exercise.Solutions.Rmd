@@ -259,13 +259,122 @@ markers <- scoreMarkers(uncorrected,
 
 I asked you to identify this cluster:
 
-```{r}
+<img src="../Images/TSNE_for_clusters.v2.png" style="margin:auto; display:block" />
 
-plotTSNE(sce) +
-  geom_point(shape=21, fill="#52A3F8")
-ggsave("Images/TSNE_for_clusters.v2.png")
-plotTSNE(sce, colour_by = "k.57_cluster.fun.leiden")
-ggsave("Images/TSNE_for_clusters_with_Leiden.png")
+Which is made up of clusters 3 and 7.
+
+```{r}
+plotTSNE(sce, 
+         colour_by = "k.57_cluster.fun.leiden") +
+  facet_wrap(~ sce$SampleGroup)
+```
+Let's have a look at the top marker genes for cluster 3:
+
+```{r}
+topRanked <- markers[["3"]] %>%
+  as.data.frame() %>% 
+  select(contains("cohen")) %>% 
+  filter(rank.logFC.cohen <= 5) %>% 
+  arrange(rank.logFC.cohen)
+topRanked
+```
+
+There's lots of ribosomal genes here. Let's check the expression of a few:
+
+```{r}
+plotExpression(uncorrected, 
+               features = "RPS27", 
+               x = "label")
+plotExpression(uncorrected, 
+               features = "RPL34", 
+               x = "label")
+plotExpression(uncorrected, 
+               features = "RPL21", 
+               x = "label")
+```
+
+These aren't really going to be useful as marker genes.
+
+On the otherhand we do have **CD3D**, **CD3E** and **TRAC**, which are T-cell markers,
+and **IL32**, which is an indicator of T-cell activation.
+
+Let's take a look at these:
+
+
+```{r}
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "CD3D",
+               text_by = "k.60_cluster.fun.leiden")
+
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "CD3E",
+               text_by = "k.60_cluster.fun.leiden")
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "TRAC",
+               text_by = "k.60_cluster.fun.leiden")
+
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "IL32",
+               text_by = "k.60_cluster.fun.leiden")
+```
+
+```{r}
+plotExpression(uncorrected, 
+               features = "CD3D", 
+               x = "label")
+plotExpression(uncorrected, 
+               features = "CD3E", 
+               x = "label")
+plotExpression(uncorrected, 
+               features = "TRAC", 
+               x = "label")
+plotExpression(uncorrected, 
+               features = "IL32", 
+               x = "label")
+```
+
+
+Let's take look at cluster 7's marker genes.
+
+```{r}
+topRanked <- markers[["7"]] %>%
+  as.data.frame() %>% 
+  select(contains("cohen")) %>% 
+  filter(rank.logFC.cohen <= 5) %>% 
+  arrange(rank.logFC.cohen)
+topRanked
+```
+
+**IL32**, **NKG7**, **GZMA** and **GNLY** might suggest that these are activated
+NK cells or perhaps NKT cells?
+
+```{r}
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "IL32",
+               text_by = "k.60_cluster.fun.leiden")
+
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "NKG7",
+               text_by = "k.60_cluster.fun.leiden")
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "GZMA",
+               text_by = "k.60_cluster.fun.leiden")
+
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "GNLY",
+               text_by = "k.60_cluster.fun.leiden")
+```
+
+Let's have a look at a couple of additional NK marker genes.
+
+```{r}
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "KLRB1",
+               text_by = "k.60_cluster.fun.leiden")
+
+plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "PRF1",
+               text_by = "k.60_cluster.fun.leiden")
 ```
 
 
