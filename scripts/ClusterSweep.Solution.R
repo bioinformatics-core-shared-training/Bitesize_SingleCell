@@ -14,7 +14,6 @@ library(bluster)
 library(BiocParallel)
 bpp <- BiocParallel::MulticoreParam(16)
 
-print(date())
 # set the working directory to the Robjects directory
 projDir <- "/mnt/scratcha/bioinformatics/sawle01/Bitesize_SingleCell_Course_Materials/Robjects"
 setwd(projDir)
@@ -22,14 +21,12 @@ setwd(projDir)
 # load the data
 sce <- readRDS("DataIntegration_mnn.out.AllCells.Rds")
 
-print(date())
 # run cluster sweep
 out <- clusterSweep(reducedDim(sce, "corrected"), 
     NNGraphParam(), 
-    k=as.integer(c(5, 10, 15, 20, 25, 30)),
+    k=as.integer(c(5, 10, 15, 20, 25, 30, 40, 50, 60)),
     cluster.fun=c("louvain", "walktrap", "infomap"),
     BPPARAM=bpp)
-print(date())
 
 # save the cluster sweep results
 saveRDS(out, "Robjects/clusterSweep.out.rds")
@@ -38,7 +35,6 @@ saveRDS(out, "Robjects/clusterSweep.out.rds")
 colData(sce) <- cbind(colData(sce), DataFrame(out$clusters))
 saveRDS(sce, "Robjects/clusterSweep.sce.rds")
 
-print(date())
 # create a data frame with cluster behaviour metrics
 
 df <- as.data.frame(out$parameters)
@@ -60,7 +56,4 @@ all.wcss <- lapply(as.list(out$clusters), function(cluster) {
 df$wcss <- unlist(all.wcss)
 
 # save the dataframe
-saveRDS(df, "clusterSweep.metrics_df.rds")
-
-print(date())
-
+write_tsv(df, "clusterSweep.metrics_df.tsv")
