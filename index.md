@@ -128,6 +128,8 @@ Tuesday Session
   + [Slides](Slides/08_09_Clustering_and_Marker_Genes.html)  
   + [Clustering Materials](Markdowns/08_Clustering_Materials.nb.html)  
   + [Cluster Marker Gene Selection Materials](Markdowns/09_ClusterMarkerGenes.nb.html)  
+  + [Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%206%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20taught%20session%2D20220524%5F113203%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
+
   + [Clustering and Marker Gene Selection Exercise](Markdowns/08_09_Clustering_and_Marker_Genes_Exercise.html)  
 
 ### Week 7
