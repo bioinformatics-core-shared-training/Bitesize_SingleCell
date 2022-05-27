@@ -1,6 +1,6 @@
 ---
 title: "Introduction to single-cell RNA-seq analysis"
-author: "Me"
+author: "Ashley Sawle"
 date: "May 2022"
 subtitle: Clustering and Marker Genes
 output:
@@ -56,8 +56,7 @@ against the *k*.
 
 ```{r plotMetrics, fig.width=12}
 nclPlot <- ggplot(df, aes(x = k, y = num.clusters)) + 
-                  geom_line(aes(colour=cluster.fun), lwd=2) +
-                  scale_y_continuous(limits=c(0, 25))
+                  geom_line(aes(colour=cluster.fun), lwd=2)
 
 silPlot <- ggplot(df, aes(x = k, y = silhouette)) + 
                   geom_line(aes(colour=cluster.fun), lwd=2)
@@ -70,7 +69,7 @@ nclPlot + silPlot + wcssPlot + plot_layout(guides = "collect")
 
 ```{r}
 df %>%
-  filter(num.clusters>10 & num.clusters<15)
+  filter(num.clusters>=10 & num.clusters<=15)
 ```
 
 
@@ -91,7 +90,6 @@ table(sce$k.60_cluster.fun.leiden)
 table(sce$k.15_cluster.fun.louvain)
 table(sce$k.20_cluster.fun.louvain)
 table(sce$k.25_cluster.fun.louvain)
-
 ```
 # Cluster-wise silhouette widths
 
@@ -123,7 +121,7 @@ plotSilhouette(sce$k.25_cluster.fun.louvain, "Louvain k=25")
 rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ID, rowData(sce)$Symbol)
 ```
 
-```{r fig.height=12, fig.width=12}
+```{r fig.height=12, fig.width=14}
 p1 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "MS4A1",
                text_by = "k.60_cluster.fun.leiden")
@@ -139,11 +137,9 @@ p4 <- plotTSNE(sce, by_exprs_values = "reconstructed"
 (p1 + p2) / (p3 + p4)
 ```
 
-I'm going to stick with the Louvain as it seems to give some
-sub-clustering of the large block of potential B-cells that seems to
-match with some of the marker genes.
+# A look at the three louvain clusterings with Cluster Tree
 
-# Cluster Tree
+We can look at how cells move between clusters using `clustree`
 
 ```{r}
 combined <- cbind(k.15=sce$k.15_cluster.fun.louvain,
@@ -163,13 +159,15 @@ rownames(jacc.mat) <- paste("Louvain", rownames(jacc.mat))
 colnames(jacc.mat) <- paste("Leiden", colnames(jacc.mat))
 pheatmap(jacc.mat, color=viridis::viridis(100), cluster_cols=FALSE, cluster_rows=FALSE)
 ```
+
 ```{r}
 plotTSNE(sce, 
          colour_by = "k.50_cluster.fun.leiden",
          text_by = "k.50_cluster.fun.leiden")
 ```
+
 ```{r}
-plotSilhouette(sce$k.50_cluster.fun.leiden, "Leiden k=60")
+plotSilhouette(sce$k.50_cluster.fun.leiden, "Leiden k=50")
 ```
 
 ```{r, eval=FALSE}
@@ -265,9 +263,10 @@ Which is made up of clusters 3 and 7.
 
 ```{r}
 plotTSNE(sce, 
-         colour_by = "k.57_cluster.fun.leiden") +
-  facet_wrap(~ sce$SampleGroup)
+         colour_by = "k.57_cluster.fun.leiden", 
+         text_by = "k.57_cluster.fun.leiden")
 ```
+
 Let's have a look at the top marker genes for cluster 3:
 
 ```{r}
@@ -275,11 +274,12 @@ topRanked <- markers[["3"]] %>%
   as.data.frame() %>% 
   select(contains("cohen")) %>% 
   filter(rank.logFC.cohen <= 5) %>% 
-  arrange(rank.logFC.cohen)
+  arrange(desc(mean.logFC.cohen))
 topRanked
 ```
 
-There's lots of ribosomal genes here. Let's check the expression of a few:
+There's lots of ribosomal genes at the top of this list. Let's check the
+expression of a few:
 
 ```{r}
 plotExpression(uncorrected, 
@@ -295,44 +295,43 @@ plotExpression(uncorrected,
 
 These aren't really going to be useful as marker genes.
 
-On the otherhand we do have **CD3D**, **CD3E** and **TRAC**, which are T-cell markers,
-and **IL32**, which is an indicator of T-cell activation.
+On the otherhand, further down we do have **CD3D**, **CD3E** and **TRAC**,
+which are T-cell markers, and **IL32**, which is an indicator of T-cell
+activation.
 
 Let's take a look at these:
 
-
-```{r}
-plotTSNE(sce, by_exprs_values = "reconstructed",
+```{r fig.height=12, fig.width=14}
+p1 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "CD3D",
-               text_by = "k.60_cluster.fun.leiden")
-
-plotTSNE(sce, by_exprs_values = "reconstructed",
+               text_by = "label")
+p2 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "CD3E",
-               text_by = "k.60_cluster.fun.leiden")
-plotTSNE(sce, by_exprs_values = "reconstructed",
+               text_by = "label")
+p3 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "TRAC",
-               text_by = "k.60_cluster.fun.leiden")
-
-plotTSNE(sce, by_exprs_values = "reconstructed",
+               text_by = "label")
+p4 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "IL32",
-               text_by = "k.60_cluster.fun.leiden")
+               text_by = "label")
+(p1 + p2) / (p3 + p4) 
 ```
 
-```{r}
-plotExpression(uncorrected, 
+```{r fig.height=8, fig.width=14}
+p1 <- plotExpression(uncorrected, 
                features = "CD3D", 
                x = "label")
-plotExpression(uncorrected, 
+p2 <- plotExpression(uncorrected, 
                features = "CD3E", 
                x = "label")
-plotExpression(uncorrected, 
+p3 <- plotExpression(uncorrected, 
                features = "TRAC", 
                x = "label")
-plotExpression(uncorrected, 
+p4 <- plotExpression(uncorrected, 
                features = "IL32", 
                x = "label")
+(p1 + p2) / (p3 + p4) 
 ```
-
 
 Let's take look at cluster 7's marker genes.
 
@@ -341,42 +340,30 @@ topRanked <- markers[["7"]] %>%
   as.data.frame() %>% 
   select(contains("cohen")) %>% 
   filter(rank.logFC.cohen <= 5) %>% 
-  arrange(rank.logFC.cohen)
+  arrange(desc(mean.logFC.cohen))
 topRanked
 ```
 
-**IL32**, **NKG7**, **GZMA** and **GNLY** might suggest that these are activated
-NK cells or perhaps NKT cells?
+**IL32**, **NKG7**, **GZMA** and **CD69** might suggest that these are activated
+T-cells.
 
-```{r}
-plotTSNE(sce, by_exprs_values = "reconstructed",
+```{r fig.height=12, fig.width=14}
+p1 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "IL32",
                text_by = "k.60_cluster.fun.leiden")
 
-plotTSNE(sce, by_exprs_values = "reconstructed",
+p2 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "NKG7",
                text_by = "k.60_cluster.fun.leiden")
-plotTSNE(sce, by_exprs_values = "reconstructed",
+p3 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "GZMA",
                text_by = "k.60_cluster.fun.leiden")
 
-plotTSNE(sce, by_exprs_values = "reconstructed",
-               colour_by = "GNLY",
+p4 <- plotTSNE(sce, by_exprs_values = "reconstructed",
+               colour_by = "CD69",
                text_by = "k.60_cluster.fun.leiden")
+(p1 + p2) / (p3 + p4)
 ```
-
-Let's have a look at a couple of additional NK marker genes.
-
-```{r}
-plotTSNE(sce, by_exprs_values = "reconstructed",
-               colour_by = "KLRB1",
-               text_by = "k.60_cluster.fun.leiden")
-
-plotTSNE(sce, by_exprs_values = "reconstructed",
-               colour_by = "PRF1",
-               text_by = "k.60_cluster.fun.leiden")
-```
-
 
 ## Session information
 
@@ -385,11 +372,3 @@ plotTSNE(sce, by_exprs_values = "reconstructed",
 sessionInfo()
 ```
 </details>
-
-```{r}
-# visualise a previously known marker gene (for monocytes)
-plotTSNE(sce, 
-         colour_by = "CST3", 
-         text_by = "walktrap20", 
-         by_exprs_values = "reconstructed")
-```

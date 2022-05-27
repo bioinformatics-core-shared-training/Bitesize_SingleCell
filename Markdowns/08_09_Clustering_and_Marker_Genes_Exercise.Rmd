@@ -136,6 +136,10 @@ Finally, choose one clustering to use for marker gene identification.
 
 # 3. Marker gene selection
 
+You will need the uncorrected data, you can load this from the the RDS file:
+
+`Robjects/LogNormalised.AllCells.Rds`
+
 Run marker gene selection on your final clustering as described in the materials.
 You may additionally want to refer the OSCA book for further information.
 
@@ -143,8 +147,8 @@ Q. Can you identify the cell population or populations contained in the group of
 cells circled in the figure below based on the marker genes for the relevant
 cluster or clusters?
 
-```{r, echo=FALSE, out.width='100%', fig.align='center'}
-knitr::include_graphics("Images/TSNE_for_clusters.png")
+```{r, echo=FALSE, out.width='60%', fig.align='center'}
+knitr::include_graphics("Images/TSNE_for_clusters.v2.png")
 ```
 
 
