@@ -232,7 +232,7 @@ uncorrected <- readRDS("../Robjects/LogNormalised.AllCells.Rds")
 ```
 
 
-We'll switch the row names to be the gene sybmols.
+We'll switch the row names to be the gene symbols.
 
 ```{r}
 rownames(uncorrected) <- uniquifyFeatureNames(rowData(uncorrected)$ID,
@@ -295,7 +295,7 @@ plotExpression(uncorrected,
 
 These aren't really going to be useful as marker genes.
 
-On the otherhand, further down we do have **CD3D**, **CD3E** and **TRAC**,
+On the other hand, further down we do have **CD3D**, **CD3E** and **TRAC**,
 which are T-cell markers, and **IL32**, which is an indicator of T-cell
 activation.
 
@@ -350,18 +350,17 @@ T-cells.
 ```{r fig.height=12, fig.width=14}
 p1 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "IL32",
-               text_by = "k.60_cluster.fun.leiden")
+               text_by = "label")
 
 p2 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "NKG7",
-               text_by = "k.60_cluster.fun.leiden")
+               text_by = "label")
 p3 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "GZMA",
-               text_by = "k.60_cluster.fun.leiden")
-
+               text_by = "label")
 p4 <- plotTSNE(sce, by_exprs_values = "reconstructed",
                colour_by = "CD69",
-               text_by = "k.60_cluster.fun.leiden")
+               text_by = "label")
 (p1 + p2) / (p3 + p4)
 ```
 
