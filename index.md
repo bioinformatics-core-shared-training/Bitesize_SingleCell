@@ -131,6 +131,9 @@ Tuesday Session
   + [Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%206%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20taught%20session%2D20220524%5F113203%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
 
   + [Clustering and Marker Gene Selection Exercise](Markdowns/08_09_Clustering_and_Marker_Genes_Exercise.html)  
+  + [ClusterSweep batch script solution](scripts/ClusterSweep.Solution.R)  
+  + [Clustering and Marker Gene Selection possible solution](Markdowns/08_Clustering_Exercise.Solutions.html)  
+  + [Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%206%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20clinic%20session%2D20220527%5F140403%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
 
 ### Week 7
 
