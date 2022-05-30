@@ -4,11 +4,10 @@ author: "Abbi Edwards"
 date: "Bitesize - May 2022"
 output:
   ioslides_presentation:
-    logo: ../Images/uniOfCamCrukLogos.png
+    logo: ../Images/CRUK_Cambridge_Institute.png
     smaller: yes
     widescreen: yes
     css: css/stylesheet.css
-  slidy_presentation: default
   beamer_presentation: default
 ---
 
@@ -17,10 +16,6 @@ library(tidyr)
 library(dplyr)
 
 ```
-
-## Workflow
-
-<img src="../Images/workflow.svg" class="center" style="width: 70%; margin-top: 40px;">
 
 ## Outline
 
@@ -42,14 +37,6 @@ Pseudo-bulk:
 
 * gene expression levels for each cluster in each sample
 * are obtained by summing across cells
-
-## Differential Expression - Example
-
-An example. TSNE plots showing clusters and sample groups (left) and samples (right):
-
-```{r, out.height='50%', out.width='100%'}
-knitr::include_graphics("../Images/multiSplCompMerged_both.png")
-```
 
 ## Differential expression between conditions
 
