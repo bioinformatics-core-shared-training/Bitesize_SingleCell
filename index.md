@@ -138,6 +138,8 @@ Tuesday Session
 ### Week 7
 
 * Differential Expression and Abundance - Abbi Edwards
+  + [Slides](Slides/10_MultiSplCompSlides.html)
+  + [Demo](Markdowns/10_MultiSplComp.html)
 
 ## Additional Resources
 
