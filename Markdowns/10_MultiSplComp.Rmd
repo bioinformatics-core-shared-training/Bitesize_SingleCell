@@ -372,6 +372,10 @@ res.ab2 <- glmQLFTest(fit.ab2, coef=ncol(design))
 topTags(res.ab2, n=10)
 ```
 
+# Exercise
+
+Run through this yourself and have a look at what some of the other clusters look like. Which clusters are changing the most? Which clusters don't change?
+
 ## Session information
 
 <details>
