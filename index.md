@@ -140,6 +140,8 @@ Tuesday Session
 * Differential Expression and Abundance - Abbi Edwards
   + [Slides](Slides/10_MultiSplCompSlides.html)
   + [Demo](Markdowns/10_MultiSplComp.html)
+  + [Recording](https://crukci-my.sharepoint.com/:v:/r/personal/abigail_edwards_cruk_cam_ac_uk/Documents/Recordings/Week%207%20-%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20-%20taught%20session-20220531_113217-Meeting%20Recording.mp4?csf=1&web=1&e=Cn0a4b)
+  + [Bulk RNASeq Analysis Course materials](https://bioinformatics-core-shared-training.github.io/Bulk_RNAseq_Course_Apr22/)
 
 ## Additional Resources
 
