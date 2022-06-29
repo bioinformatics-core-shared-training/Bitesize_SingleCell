@@ -83,7 +83,7 @@ Tuesday Session
 * Alignment and cell counting with Cellranger - Ashley Sawle
   + [Slides](Slides/03_CellRangerSlides.html) \([pdf](Slides/03_CellRangerSlides.pdf)\)
   + [Practical](Markdowns/03_CellRanger.html)
-  + [Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/Eb70QiLr8r9MpLMU70wzuFsBFhjLOjK9chkGQ3Ab27jZJA?e=4Kje8E)
+  + [Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/EeLnF5YIBbBMkOR4zvjGJ7oBmoFt5X-R7FcXrHtqwzIviQ?e=ur8IxS)
 
 
 ### Week 2 
