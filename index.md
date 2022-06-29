@@ -91,9 +91,9 @@ Tuesday Session
 * Quality Control and Filtering - Chandra Chilamakuri 
 
   + [Practical](Markdowns/04_Preprocessing_And_QC.html)
-  + [Practical Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%202%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20taught%20session%2D20220426%5F113253%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
+  + [Practical Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/EVxnj7mEuWdInh-lb874kIIBPEklxCFzy2EYbj85T80vOQ?e=cX19e1)
   + [Exercise](Markdowns/04_Preprocessing_And_QC.Exercise.html) 
-  + [Exercise Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%202%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20clinic%20session%2D20220429%5F140517%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
+  + [Exercise Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/EZ40xT4OQ6VIiAiGv9DVyPcBnOFdMLyAyLFQxcoStvzHCg?e=FSZmSg)
 
 ### Week 3 
 
@@ -101,6 +101,7 @@ Tuesday Session
 
   + [Slides](Slides/Normalization.pdf)
   + [Practical](Markdowns/05_Normalisation.html)
+  + [Practical Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/ERz62g1cBdFCkXf_y9YufzEBH6zN-j3QkTrjsV8UFf4WSw?e=zPSnlq)
   + [Exercises](Markdowns/05_Normalisation_exercises.html)
 
 
@@ -128,12 +129,12 @@ Tuesday Session
   + [Slides](Slides/08_09_Clustering_and_Marker_Genes.html)  
   + [Clustering Materials](Markdowns/08_Clustering_Materials.nb.html)  
   + [Cluster Marker Gene Selection Materials](Markdowns/09_ClusterMarkerGenes.nb.html)  
-  + [Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%206%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20taught%20session%2D20220524%5F113203%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
+  + [Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/EbOuS-MxoEFHp7-0bZoulgEBfsFT9kJDzVKx4Etnotrwxw?e=MnvBp9)
 
   + [Clustering and Marker Gene Selection Exercise](Markdowns/08_09_Clustering_and_Marker_Genes_Exercise.html)  
   + [ClusterSweep batch script solution](scripts/ClusterSweep.Solution.R)  
   + [Clustering and Marker Gene Selection possible solution](Markdowns/08_Clustering_Exercise.Solutions.html)  
-  + [Recording](https://crukci-my.sharepoint.com/personal/ashley_sawle_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%206%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20clinic%20session%2D20220527%5F140403%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fashley%5Fsawle%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
+  + [Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/EWqzcQR9fydCtuqOdhrfFjQBiBk6-7Dm5XT6XpNLmFRrPA?e=oUkwca)
 
 ### Week 7
 
