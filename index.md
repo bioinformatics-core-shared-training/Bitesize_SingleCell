@@ -110,7 +110,7 @@ Tuesday Session
 * Feature selection and Dimensionality Reduction - Chandra Chilamakuri
   + [Slides](Slides/06_FeatureSelectionAndDimensionalityReduction_slides.html)
   + [Practical/Exercises](Markdowns/06_FeatureSelectionAndDimensionalityReduction.html)
-  + [Recording](https://crukci-my.sharepoint.com/personal/abigail_edwards_cruk_cam_ac_uk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fabigail%5Fedwards%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings%2FWeek%204%20%2D%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20%2D%20taught%20session%2D20220510%5F113243%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fabigail%5Fedwards%5Fcruk%5Fcam%5Fac%5Fuk%2FDocuments%2FRecordings&ga=1)
+  + [Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/ERRZyduqdKhFj3IERlyxdUsBB8luGfe6KYk7cnTG0LP0mw?e=N09oEN)
 
 
 
@@ -119,8 +119,8 @@ Tuesday Session
 * Batch Correction and Data Set Integration - Abbi Edwards
   + [Slides](Slides/07_DataIntegrationAndBatchCorrectionSlides.html)
   + [Demo/Exercise](Markdowns/07_DatasetIntegration.html)
-  + [Recording of taught session](https://crukci-my.sharepoint.com/:v:/r/personal/abigail_edwards_cruk_cam_ac_uk/Documents/Recordings/Week%205%20-%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20-%20taught%20session-20220517_113135-Meeting%20Recording.mp4?csf=1&web=1&e=pvTzU1) 
-  + [Recording of Clinic](https://crukci-my.sharepoint.com/:v:/r/personal/abigail_edwards_cruk_cam_ac_uk/Documents/Recordings/Week%205%20-%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20-%20clinic%20session-20220520_140453-Meeting%20Recording.mp4?csf=1&web=1&e=Jv4cEF)
+  + [Recording of taught session](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/Eb_qESD1qsBBlWkppbiMkvoB5LriLWM5Sf1cfCjPr_amuQ?e=PNCiis) 
+  + [Recording of Clinic](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/Ed4aZNTOUolElV5ZVWYLNdgBGeO-lhnttX7zl3DZdyglIw?e=nehZkw)
   + [Suggested Solution](Markdowns/07_DatasetIntegration_clinic.html)
 
 ### Week 6
@@ -141,8 +141,9 @@ Tuesday Session
 * Differential Expression and Abundance - Abbi Edwards
   + [Slides](Slides/10_MultiSplCompSlides.html)
   + [Demo](Markdowns/10_MultiSplComp.html)
-  + [Recording](https://crukci-my.sharepoint.com/:v:/r/personal/abigail_edwards_cruk_cam_ac_uk/Documents/Recordings/Week%207%20-%20Bitesize%20Introduction%20to%20Single%20Cell%20RNASeq%20analysis%20-%20taught%20session-20220531_113217-Meeting%20Recording.mp4?csf=1&web=1&e=Cn0a4b)
+  + [Recording](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/EZqnSAU9l-pLuJREdqAVGFcBirwfR2rvTcauB4VrbNMpOg?e=dNlOCK)
   + [Bulk RNASeq Analysis Course materials](https://bioinformatics-core-shared-training.github.io/Bulk_RNAseq_Course_Apr22/)
+  + [Recording of clinic](https://crukci-my.sharepoint.com/:v:/g/personal/ashley_sawle_cruk_cam_ac_uk/EbQNBtxgUP9AvBAGUC8WSrQBB67vNcuxJtTyAt9sGoPfWA?e=65hLg4)
 
 ## Additional Resources
 
